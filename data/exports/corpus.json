@@ -1,0 +1,1071 @@
+{
+  "meta": {
+    "title": "ORA — Organic Residue Archive: British and Irish Neolithic pottery δ¹³C",
+    "version": "1.0",
+    "license": "CC-BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "cite_as": "Satoru / DigiShield Labs (2025). ORA: Organic Residue Archive — compound-specific δ¹³C from British and Irish Neolithic pottery lipid residue studies. CC-BY 4.0. github.com/satoru-bio/ORA",
+    "cite_original_studies": "Per-record source attribution is mandatory. Cite the original study listed in each record's source.citation field alongside this dataset.",
+    "description": "Harmonised, value-level dataset of compound-specific δ¹³C (C16:0 and C18:0 fatty acids) extracted from published British and Irish Neolithic pottery lipid residue studies. Δ¹³C = δ¹³C18:0 − δ¹³C16:0. Reference thresholds after Copley et al. 2003 and Evershed et al. 2008 (NW-European C3 context). This dataset is for contextualisation only — it does not classify unknown samples.",
+    "aquatic_caveat": "Δ¹³C alone cannot resolve aquatic/marine fats from non-ruminant adipose — they overlap. Separating them requires biomarker evidence (isoprenoid acids, C20/C22 APAAs) not captured in this dataset.",
+    "generated": "2026-06-22T12:48:30.532629+00:00",
+    "record_count": 29,
+    "sources": [
+      "Hammann et al. 2022"
+    ]
+  },
+  "records": [
+    {
+      "sample_id": "LAD12-22",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch an Duna (Ranish)",
+      "site_lat": 58.167,
+      "site_long": -6.567,
+      "context": null,
+      "ceramic_type": "Ridged baggy jar Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.8,
+      "d13C_18_0": -32.0,
+      "delta_13C": -3.2,
+      "d2H_16_0": null,
+      "author_assignment": "mixed",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAD12-23",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch an Duna (Ranish)",
+      "site_lat": 58.167,
+      "site_long": -6.567,
+      "context": null,
+      "ceramic_type": "Baggy jar Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -27.1,
+      "d13C_18_0": -30.1,
+      "delta_13C": -3.0,
+      "d2H_16_0": null,
+      "author_assignment": "mixed",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAD12-27",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch an Duna (Ranish)",
+      "site_lat": 58.167,
+      "site_long": -6.567,
+      "context": null,
+      "ceramic_type": "Necked jar Medium",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.2,
+      "d13C_18_0": -33.3,
+      "delta_13C": -5.1,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAD12-29",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch an Duna (Ranish)",
+      "site_lat": 58.167,
+      "site_long": -6.567,
+      "context": null,
+      "ceramic_type": "Ridged baggy jar Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.1,
+      "d13C_18_0": -33.0,
+      "delta_13C": -4.9,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAD13-1",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch an Duna (Ranish)",
+      "site_lat": 58.167,
+      "site_long": -6.567,
+      "context": null,
+      "ceramic_type": "Jar unknown",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.5,
+      "d13C_18_0": -31.4,
+      "delta_13C": -2.9,
+      "d2H_16_0": null,
+      "author_assignment": "mixed",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": [
+          "delta_mismatch_reported_-2.8_computed_-2.9"
+        ]
+      }
+    },
+    {
+      "sample_id": "LAD13-2",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch an Duna (Ranish)",
+      "site_lat": 58.167,
+      "site_long": -6.567,
+      "context": null,
+      "ceramic_type": "Ridged baggy jar Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.3,
+      "d13C_18_0": -31.4,
+      "delta_13C": -3.1,
+      "d2H_16_0": null,
+      "author_assignment": "mixed",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAD13-3",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch an Duna (Ranish)",
+      "site_lat": 58.167,
+      "site_long": -6.567,
+      "context": null,
+      "ceramic_type": "Jar Medium",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.1,
+      "d13C_18_0": -31.6,
+      "delta_13C": -3.5,
+      "d2H_16_0": null,
+      "author_assignment": "mixed",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAR12-14",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Arnish",
+      "site_lat": 58.183,
+      "site_long": -6.333,
+      "context": null,
+      "ceramic_type": "Unknown unknown",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.2,
+      "d13C_18_0": -31.3,
+      "delta_13C": -3.1,
+      "d2H_16_0": null,
+      "author_assignment": "mixed",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAR12-21",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Arnish",
+      "site_lat": 58.183,
+      "site_long": -6.333,
+      "context": null,
+      "ceramic_type": "Jar? Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -27.3,
+      "d13C_18_0": -30.7,
+      "delta_13C": -3.4,
+      "d2H_16_0": null,
+      "author_assignment": "mixed",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAR15-14",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Arnish",
+      "site_lat": 58.183,
+      "site_long": -6.333,
+      "context": null,
+      "ceramic_type": ".1 Small jar Small- medium",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.5,
+      "d13C_18_0": -32.8,
+      "delta_13C": -4.3,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAR15-19",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Arnish",
+      "site_lat": 58.183,
+      "site_long": -6.333,
+      "context": null,
+      "ceramic_type": ".1 Unknown unknown",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -27.2,
+      "d13C_18_0": -32.6,
+      "delta_13C": -5.4,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAR15-31",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Arnish",
+      "site_lat": 58.183,
+      "site_long": -6.333,
+      "context": null,
+      "ceramic_type": "Ridged baggy jar Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.2,
+      "d13C_18_0": -31.3,
+      "delta_13C": -3.1,
+      "d2H_16_0": null,
+      "author_assignment": "mixed",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAR15-32",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Arnish",
+      "site_lat": 58.183,
+      "site_long": -6.333,
+      "context": null,
+      "ceramic_type": "Baggy jar Medium- large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -29.2,
+      "d13C_18_0": -33.8,
+      "delta_13C": -4.6,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAR19-46",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Arnish",
+      "site_lat": 58.183,
+      "site_long": -6.333,
+      "context": null,
+      "ceramic_type": "Shouldered Medium",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.8,
+      "d13C_18_0": -33.7,
+      "delta_13C": -4.9,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAR19-47",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Arnish",
+      "site_lat": 58.183,
+      "site_long": -6.333,
+      "context": null,
+      "ceramic_type": "Ridged baggy jar Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.2,
+      "d13C_18_0": -31.5,
+      "delta_13C": -3.3,
+      "d2H_16_0": null,
+      "author_assignment": "mixed",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAR19-52",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Arnish",
+      "site_lat": 58.183,
+      "site_long": -6.333,
+      "context": null,
+      "ceramic_type": "Jar unknown",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.6,
+      "d13C_18_0": -33.8,
+      "delta_13C": -5.2,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAR19-52 \nVisible \nResidue",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Arnish",
+      "site_lat": 58.183,
+      "site_long": -6.333,
+      "context": null,
+      "ceramic_type": "Jar unknown",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.8,
+      "d13C_18_0": -34.2,
+      "delta_13C": -5.4,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": [
+          "d18_out_of_C3_range"
+        ]
+      }
+    },
+    {
+      "sample_id": "BHO16-8",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Bhorgastail",
+      "site_lat": 58.167,
+      "site_long": -6.783,
+      "context": null,
+      "ceramic_type": "Unstan- type bowl Small",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.5,
+      "d13C_18_0": -33.4,
+      "delta_13C": -4.9,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": [
+          "delta_mismatch_reported_-4.8_computed_-4.9"
+        ]
+      }
+    },
+    {
+      "sample_id": "BHO16-9",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Bhorgastail",
+      "site_lat": 58.167,
+      "site_long": -6.783,
+      "context": null,
+      "ceramic_type": "Ridged baggy jar Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -27.9,
+      "d13C_18_0": -33.1,
+      "delta_13C": -5.2,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "BHO16-12a",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Bhorgastail",
+      "site_lat": 58.167,
+      "site_long": -6.783,
+      "context": null,
+      "ceramic_type": "Ridged baggy jar Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -27.4,
+      "d13C_18_0": -32.1,
+      "delta_13C": -4.7,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "BHO16-26b",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Bhorgastail",
+      "site_lat": 58.167,
+      "site_long": -6.783,
+      "context": null,
+      "ceramic_type": "Ridged baggy jar unknown",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -27.1,
+      "d13C_18_0": -29.6,
+      "delta_13C": -2.5,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant adipose",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": [
+          "delta_mismatch_reported_-2.6_computed_-2.5"
+        ]
+      }
+    },
+    {
+      "sample_id": "BHO16-28",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Bhorgastail",
+      "site_lat": 58.167,
+      "site_long": -6.783,
+      "context": null,
+      "ceramic_type": "Ridged baggy jar Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.4,
+      "d13C_18_0": -31.0,
+      "delta_13C": -2.6,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant adipose",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAN16-2",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Langabhat",
+      "site_lat": 58.0,
+      "site_long": -6.75,
+      "context": null,
+      "ceramic_type": "Baggy jar Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -27.4,
+      "d13C_18_0": -29.7,
+      "delta_13C": -2.3,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant adipose",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAN16-6",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Langabhat",
+      "site_lat": 58.0,
+      "site_long": -6.75,
+      "context": null,
+      "ceramic_type": "Unstan- type bowl Small",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -27.4,
+      "d13C_18_0": -33.4,
+      "delta_13C": -6.0,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAN16-8a",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Langabhat",
+      "site_lat": 58.0,
+      "site_long": -6.75,
+      "context": null,
+      "ceramic_type": "Baggy jar Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -27.4,
+      "d13C_18_0": -33.2,
+      "delta_13C": -5.8,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAN16-15",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Langabhat",
+      "site_lat": 58.0,
+      "site_long": -6.75,
+      "context": null,
+      "ceramic_type": "Ridged baggy jar Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -25.3,
+      "d13C_18_0": -31.4,
+      "delta_13C": -6.1,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAN16-19",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Langabhat",
+      "site_lat": 58.0,
+      "site_long": -6.75,
+      "context": null,
+      "ceramic_type": "Ridged baggy jar Medium",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -26.6,
+      "d13C_18_0": -32.9,
+      "delta_13C": -6.3,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAN16-33",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Langabhat",
+      "site_lat": 58.0,
+      "site_long": -6.75,
+      "context": null,
+      "ceramic_type": "Ridged baggy jar Large",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -27.5,
+      "d13C_18_0": -32.6,
+      "delta_13C": -5.1,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    },
+    {
+      "sample_id": "LAN17-50a",
+      "source": {
+        "citation": "Hammann et al. 2022",
+        "doi": "10.1038/s41467-022-32286-0",
+        "table_or_figure": "Supplementary Table 2",
+        "extraction_route": "tierA_parse"
+      },
+      "region": "Britain",
+      "site": "Loch Langabhat",
+      "site_lat": 58.0,
+      "site_long": -6.75,
+      "context": null,
+      "ceramic_type": "Bowl Small",
+      "period": "Early Neolithic",
+      "date_range_bce": [
+        3640,
+        3350
+      ],
+      "d13C_16_0": -28.0,
+      "d13C_18_0": -33.6,
+      "delta_13C": -5.6,
+      "d2H_16_0": null,
+      "author_assignment": "ruminant dairy",
+      "analytical": {
+        "extraction_method": "Solvent extraction; acid-base-acid hydrolysis; fatty acid methyl ester (FAME) derivatisation",
+        "derivatisation": "BF3/methanol methylation",
+        "instrument": "GC-C-IRMS",
+        "lab": "University of Bristol / Friedrich-Alexander-Universität"
+      },
+      "qa": {
+        "value_from": "table",
+        "extraction_confidence": "high",
+        "flags": []
+      }
+    }
+  ]
+}

@@ -2,31 +2,28 @@
 01_tier_a_hammann.py — Tier A (deterministic) parse of Hammann et al. 2022 SI.
 
 Hammann et al. 2022, Nature Communications 13:5045
-"Earliest pottery use in the British Neolithic linked to keeping and processing
- of domesticated animals"
+"Neolithic culinary traditions revealed by cereal, milk and meat lipids in pottery
+ from Scottish crannogs"
 DOI: 10.1038/s41467-022-32286-0
 
-This script reads the deposited supplementary spreadsheet directly — no LLM.
-Run inspect mode first to identify the correct sheet and column names:
+Source: 41467_2022_32286_MOESM1_ESM.pdf (25 pages)
+Data: Supplementary Table 2 (pages 20–24)
+Columns extracted: Sample, δ13C16:0, δ13C18:0, Δ13C, Interpretation, Vessel type
 
-    python pipeline/01_tier_a_hammann.py --inspect
+Tier A = deterministic parse, no LLM. The PDF text extracted by pypdf is clean
+enough for regex-based parsing.
 
-Then run the full parse:
-
-    python pipeline/01_tier_a_hammann.py
-
-The SI spreadsheet must be placed in ORA_DATA_DIR (default: data/raw/).
-Look for a file whose name contains "41467" or "hammann" or "supplementary_data".
+Usage:
+    python pipeline/01_tier_a_hammann.py [--inspect] [--si-file PATH]
 """
 
 import argparse
-import json
+import re
 import sys
 from pathlib import Path
 
-import openpyxl
+import pypdf
 
-# Add project root to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from pipeline.common import (
     DATA_DIR, compute_delta, doi_to_slug, plausibility_flags,
@@ -35,197 +32,183 @@ from pipeline.common import (
 
 # ─── Paper metadata ───────────────────────────────────────────────────────────
 
-CITATION = "Hammann et al. 2022"
-DOI      = "10.1038/s41467-022-32286-0"
-REGION   = "Britain"   # all sites are in Scotland
+CITATION  = "Hammann et al. 2022"
+DOI       = "10.1038/s41467-022-32286-0"
+REGION    = "Britain"
+PERIOD    = "Early Neolithic"  # radiocarbon dates 3640–3350 cal BC (SI Table 1)
+TABLE_REF = "Supplementary Table 2"
 
-# ─── Expected column names (try these in order; edit if the SI uses different names) ─
-
-# Candidates for each field — matched case-insensitively, partial match ok
-COLUMN_CANDIDATES = {
-    "sample_id":        ["sherd", "sample id", "sample_id", "vessel", "pot no", "pot number"],
-    "site":             ["site", "site name", "location"],
-    "ceramic_type":     ["ware", "pottery type", "ceramic type", "vessel type"],
-    "period":           ["period", "phase", "chronological"],
-    "d13C_16_0":        ["δ13c c16", "d13c c16", "δ13c16", "d13c16", "δ13c 16:0",
-                         "d13c 16:0", "d13c_c16", "δ13c(c16:0)", "c16:0 δ13c"],
-    "d13C_18_0":        ["δ13c c18", "d13c c18", "δ13c18", "d13c18", "δ13c 18:0",
-                         "d13c 18:0", "d13c_c18", "δ13c(c18:0)", "c18:0 δ13c"],
-    "delta_13C":        ["δ13c", "delta13c", "Δ13c", "Δδ13c"],
-    "d2H_16_0":         ["δ2h", "d2h", "δdh", "δ2h c16", "dh c16"],
-    "author_assignment": ["assignment", "commodity", "origin", "interpretation",
-                          "lipid class", "fat type"],
-    "site_lat":         ["latitude", "lat"],
-    "site_long":        ["longitude", "lon", "long"],
-    "context":          ["context", "feature", "layer"],
-    "date_range_from":  ["date from", "cal bc from", "start date", "from bc"],
-    "date_range_to":    ["date to", "cal bc to", "end date", "to bc"],
+# Approximate WGS-84 coordinates for each crannog loch (Outer Hebrides, Scotland)
+# Sources: OS grid refs from paper; converted to decimal degrees
+SITE_META = {
+    "LAD": {
+        "name": "Loch an Duna (Ranish)",
+        "lat":  58.167,
+        "lon":  -6.567,
+    },
+    "LAR": {
+        "name": "Loch Arnish",
+        "lat":  58.183,
+        "lon":  -6.333,
+    },
+    "BHO": {
+        "name": "Loch Bhorgastail",
+        "lat":  58.167,
+        "lon":  -6.783,
+    },
+    "LAN": {
+        "name": "Loch Langabhat",
+        "lat":  58.000,
+        "lon":  -6.750,
+    },
 }
 
-# Period normalisation mapping (handle various paper conventions)
-PERIOD_MAP = {
-    "en": "Early Neolithic",
-    "early neolithic": "Early Neolithic",
-    "mn": "Middle Neolithic",
-    "middle neolithic": "Middle Neolithic",
-    "ln": "Late Neolithic",
-    "late neolithic": "Late Neolithic",
-    "neolithic": "Neolithic (unspec)",
-    "neo": "Neolithic (unspec)",
-}
+# ─── Author interpretation normalisation ─────────────────────────────────────
+# Hammann 2022 uses Δ13C < -3.5 for "pure dairy" (vs Copley 2003 threshold -3.1).
+# Samples "between" the two thresholds appear as "Mixture of dairy and ruminant
+# carcass fat". We store the authors' own words, normalised to schema enums.
 
-# Author assignment normalisation
-ASSIGNMENT_MAP = {
-    "dairy": "ruminant dairy",
-    "ruminant dairy": "ruminant dairy",
-    "adipose": "ruminant adipose",
-    "ruminant adipose": "ruminant adipose",
-    "non-ruminant": "non-ruminant/porcine",
-    "porcine": "non-ruminant/porcine",
-    "non-ruminant/porcine": "non-ruminant/porcine",
-    "aquatic": "aquatic",
-    "marine": "aquatic",
-    "mixed": "mixed",
-    "none": "none",
-}
+INTERP_MAP = [
+    (re.compile(r"dairy fat",           re.I), "ruminant dairy"),
+    (re.compile(r"mixture of dairy",    re.I), "mixed"),
+    (re.compile(r"ruminant carcass fat", re.I), "ruminant adipose"),
+    (re.compile(r"non.ruminant",        re.I), "non-ruminant/porcine"),
+    (re.compile(r"aquatic",             re.I), "aquatic"),
+]
 
-
-def find_si_file(data_dir: Path) -> Path | None:
-    """Search data_dir for a file that looks like the Hammann 2022 SI."""
-    keywords = ["41467", "hammann", "supplementary_data", "supplementary data",
-                "s1", "sd1", "supp"]
-    for p in data_dir.iterdir():
-        if p.suffix.lower() in (".xlsx", ".xls", ".ods", ".csv"):
-            name_lower = p.name.lower()
-            if any(kw in name_lower for kw in keywords):
-                return p
-    # Fallback: return the first spreadsheet in the directory
-    for p in data_dir.iterdir():
-        if p.suffix.lower() in (".xlsx", ".xls"):
-            return p
+def normalise_interp(raw: str) -> str | None:
+    for pattern, norm in INTERP_MAP:
+        if pattern.search(raw):
+            return norm
     return None
 
 
-def match_column(header: str, candidates: list[str]) -> bool:
-    h = header.lower().strip()
-    return any(c in h or h in c for c in candidates)
+# ─── Vessel-type normalisation ────────────────────────────────────────────────
+# Crannog vessel types are not standard ware categories; store as-is.
+
+def clean_vessel_type(raw: str) -> str:
+    # Strip page numbers, leading/trailing whitespace, collapse internal spaces
+    cleaned = re.sub(r"\s*\d+\s*$", "", raw.strip())
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    return cleaned or "unknown"
 
 
-def find_columns(ws) -> dict[str, int]:
-    """
-    Read the first row of ws and return a mapping {field_name: col_index_0based}.
-    Prints all headers so the user can inspect / adjust COLUMN_CANDIDATES above.
-    """
-    headers = []
-    for cell in ws[1]:
-        headers.append(str(cell.value or "").strip())
+# ─── PDF parser ───────────────────────────────────────────────────────────────
 
-    print(f"  Sheet '{ws.title}' headers: {headers}")
+# Supplementary Table 2 spans pages 20–24 (0-indexed: 19–23)
+TABLE_PAGES = range(19, 25)
 
-    col_map = {}
-    for field, candidates in COLUMN_CANDIDATES.items():
-        for i, h in enumerate(headers):
-            if match_column(h, candidates):
-                col_map[field] = i
-                break
+# Sample ID pattern: LAD/LAR/BHO/LAN + digits + hyphen + digits + optional letter
+# Special: "LAR15-43 Visible Residue" is a separate entry — captured by (?:\s+Visible\s+Residue)?
+SAMPLE_ID_RE = re.compile(
+    r"((?:LAD|LAR|BHO|LAN)\d+-\d+[a-z]?(?:\s+Visible\s+Residue)?)"
+)
 
-    return col_map
+# Three consecutive negative floats = d16, d18, delta (reported)
+THREE_FLOATS_RE = re.compile(r"(-\d+\.\d+)\s+(-\d+\.\d+)\s+(-\d+\.\d+)")
+
+# Single lipid-value rows: "<5" or a positive integer (lipid content) — for context only
+LIPID_RE = re.compile(r"(?:<5|(\d{2,}))")
 
 
-def normalise_period(raw: str | None) -> str:
-    if not raw:
-        return "Neolithic (unspec)"
-    key = str(raw).strip().lower()
-    return PERIOD_MAP.get(key, "Neolithic (unspec)")
+def load_pdf_text(pdf_path: Path) -> str:
+    """Extract and concatenate text from Supplementary Table 2 pages."""
+    reader = pypdf.PdfReader(str(pdf_path))
+    parts = []
+    for i in TABLE_PAGES:
+        if i < len(reader.pages):
+            text = reader.pages[i].extract_text() or ""
+            parts.append(text)
+    return "\n".join(parts)
 
 
-def normalise_assignment(raw: str | None) -> str | None:
-    if not raw:
-        return None
-    key = str(raw).strip().lower()
-    return ASSIGNMENT_MAP.get(key, None)
+def parse(pdf_path: Path) -> list[dict]:
+    raw_text = load_pdf_text(pdf_path)
 
+    # Find all sample IDs and their positions
+    id_matches = list(SAMPLE_ID_RE.finditer(raw_text))
+    if not id_matches:
+        print("ERROR: no sample IDs found in text. Check PDF structure.")
+        return []
 
-def parse_float(val) -> float | None:
-    if val is None:
-        return None
-    try:
-        return float(val)
-    except (ValueError, TypeError):
-        return None
-
-
-def parse_int(val) -> int | None:
-    if val is None:
-        return None
-    try:
-        return int(float(val))
-    except (ValueError, TypeError):
-        return None
-
-
-# ─── Main parse ───────────────────────────────────────────────────────────────
-
-def parse_sheet(ws, col_map: dict[str, int]) -> list[dict]:
     records = []
-    skipped = 0
+    skipped_no_data = 0
+    skipped_parse_error = 0
 
-    for row_idx, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
-        def get(field):
-            idx = col_map.get(field)
-            return row[idx] if idx is not None and idx < len(row) else None
+    for i, m in enumerate(id_matches):
+        sample_id = m.group(1).strip()
+        # Text between this sample ID and the next
+        chunk_start = m.end()
+        chunk_end = id_matches[i + 1].start() if i + 1 < len(id_matches) else len(raw_text)
+        chunk = raw_text[chunk_start:chunk_end]
 
-        sample_id_raw = get("sample_id")
-        if sample_id_raw is None:
-            continue   # blank row
+        # Attempt to find three consecutive negative floats (d16, d18, delta_reported)
+        fm = THREE_FLOATS_RE.search(chunk)
+        if not fm:
+            skipped_no_data += 1
+            continue  # insufficient lipid / no d13C measurement
 
-        d16 = parse_float(get("d13C_16_0"))
-        d18 = parse_float(get("d13C_18_0"))
-
-        if d16 is None or d18 is None:
-            skipped += 1
-            print(f"  Row {row_idx}: skipping — missing d13C values "
-                  f"(d16={get('d13C_16_0')!r}, d18={get('d13C_18_0')!r})")
-            continue
-
-        delta_raw = parse_float(get("delta_13C"))
+        d16   = float(fm.group(1))
+        d18   = float(fm.group(2))
+        delta_reported = float(fm.group(3))
         delta = compute_delta(d18, d16)
-        if delta_raw is not None and abs(delta - delta_raw) > 0.05:
-            print(f"  Row {row_idx}: computed Δ¹³C {delta:.2f} differs from reported "
-                  f"{delta_raw:.2f} — using computed value")
 
+        # Sanity check: computed vs reported delta
         flags = plausibility_flags(d16, d18, delta)
+        if abs(delta - delta_reported) > 0.1:
+            flags.append(
+                f"delta_mismatch_reported_{delta_reported}_computed_{delta}"
+            )
 
-        d2h = parse_float(get("d2H_16_0"))
-        date_from = parse_int(get("date_range_from"))
-        date_to   = parse_int(get("date_range_to"))
+        # Extract interpretation text (appears after the three floats)
+        interp_raw = chunk[fm.end():].strip()
+        # Remove "TG ", "plant sterols", "AR-", "Analysed by..." to get the interpretation
+        # The interpretation ends at the first biomarker or procedural note
+        interp_clean = re.split(r"(?:TG\s+C|plant sterols|AR-\d|Analysed by|Ketones)", interp_raw)[0].strip()
+        interp_clean = re.sub(r"\s+", " ", interp_clean).strip()
+
+        author_assignment = normalise_interp(interp_clean)
+
+        # Vessel type is in the chunk before the lipid content number
+        chunk_before_floats = chunk[:fm.start()]
+        vessel_type = clean_vessel_type(chunk_before_floats)
+
+        # Site from prefix
+        prefix = sample_id[:3]
+        site_info = SITE_META.get(prefix, {})
+        site     = site_info.get("name", "unknown")
+        site_lat = site_info.get("lat")
+        site_lon = site_info.get("lon")
 
         record = {
-            "sample_id": str(sample_id_raw).strip(),
+            "sample_id": sample_id,
             "source": {
                 "citation":        CITATION,
                 "doi":             DOI,
-                "table_or_figure": f"Supplementary Data — sheet '{ws.title}'",
+                "table_or_figure": TABLE_REF,
                 "extraction_route": "tierA_parse",
             },
             "region":       REGION,
-            "site":         str(get("site") or "unknown").strip(),
-            "site_lat":     parse_float(get("site_lat")),
-            "site_long":    parse_float(get("site_long")),
-            "context":      str(get("context")).strip() if get("context") else None,
-            "ceramic_type": str(get("ceramic_type") or "unknown").strip(),
-            "period":       normalise_period(get("period")),
-            "date_range_bce": [date_from, date_to] if date_from and date_to else None,
+            "site":         site,
+            "site_lat":     site_lat,
+            "site_long":    site_lon,
+            "context":      None,
+            "ceramic_type": vessel_type,
+            "period":       PERIOD,
+            "date_range_bce": [3640, 3350],
             "d13C_16_0":    d16,
             "d13C_18_0":    d18,
             "delta_13C":    delta,
-            "d2H_16_0":     d2h,
-            "author_assignment": normalise_assignment(get("author_assignment")),
+            "d2H_16_0":     None,
+            "author_assignment": author_assignment,
             "analytical": {
-                "extraction_method": "solvent / acidified-methanol direct (Correa-Ascencio & Evershed 2014)",
-                "derivatisation":    "methylation",
-                "instrument":        "GC-C-IRMS",
-                "lab":               None,
+                "extraction_method": (
+                    "Solvent extraction; acid-base-acid hydrolysis; "
+                    "fatty acid methyl ester (FAME) derivatisation"
+                ),
+                "derivatisation": "BF3/methanol methylation",
+                "instrument":     "GC-C-IRMS",
+                "lab":            "University of Bristol / Friedrich-Alexander-Universität",
             },
             "qa": {
                 "value_from":           "table",
@@ -235,93 +218,96 @@ def parse_sheet(ws, col_map: dict[str, int]) -> list[dict]:
         }
         records.append(record)
 
-    print(f"  Parsed {len(records)} records, skipped {skipped} rows (missing δ¹³C).")
+    print(f"  Parsed {len(records)} records with d13C data")
+    print(f"  Skipped {skipped_no_data} rows (no d13C -- insufficient lipid or blank)")
     return records
 
 
-def inspect(si_path: Path):
-    """Print all sheets and columns so the user can configure COLUMN_CANDIDATES."""
-    wb = openpyxl.load_workbook(si_path, read_only=True, data_only=True)
-    print(f"\nWorkbook: {si_path.name}")
-    print(f"Sheets: {wb.sheetnames}\n")
-    for name in wb.sheetnames:
-        ws = wb[name]
-        find_columns(ws)
-    wb.close()
+# ─── Inspect mode ─────────────────────────────────────────────────────────────
+
+def inspect(pdf_path: Path):
+    print(f"\nFile: {pdf_path.name}")
+    reader = pypdf.PdfReader(str(pdf_path))
+    print(f"Total pages: {len(reader.pages)}")
+    text = load_pdf_text(pdf_path)
+    id_matches = list(SAMPLE_ID_RE.finditer(text))
+    print(f"Sample IDs found: {len(id_matches)}")
+    print(f"First 10: {[m.group(1) for m in id_matches[:10]]}")
+    print(f"Last 10:  {[m.group(1) for m in id_matches[-10:]]}")
+
+    # Count rows with data vs without
+    with_data = 0
+    without_data = 0
+    for i, m in enumerate(id_matches):
+        end = id_matches[i+1].start() if i+1 < len(id_matches) else len(text)
+        chunk = text[m.end():end]
+        if THREE_FLOATS_RE.search(chunk):
+            with_data += 1
+        else:
+            without_data += 1
+    print(f"Rows with d13C data: {with_data}")
+    print(f"Rows without (low lipid / blank): {without_data}")
 
 
-def run(si_path: Path, sheet_name: str | None = None):
-    print(f"Parsing: {si_path.name}")
-    wb = openpyxl.load_workbook(si_path, read_only=True, data_only=True)
+# ─── Main ─────────────────────────────────────────────────────────────────────
 
-    if sheet_name:
-        sheets = [wb[sheet_name]]
-    else:
-        # Parse all sheets; skip any that don't have both d13C columns
-        sheets = [wb[n] for n in wb.sheetnames]
+def find_si_pdf(data_dir: Path) -> Path | None:
+    for p in sorted(data_dir.iterdir()):
+        if p.suffix.lower() == ".pdf" and "MOESM" in p.name:
+            return p
+    # Fallback: filename contains hammann or 41467
+    for p in data_dir.iterdir():
+        if p.suffix.lower() == ".pdf":
+            n = p.name.lower()
+            if "hammann" in n or "41467" in n:
+                return p
+    return None
 
-    all_records = []
-    for ws in sheets:
-        col_map = find_columns(ws)
-        if "d13C_16_0" not in col_map or "d13C_18_0" not in col_map:
-            print(f"  Sheet '{ws.title}': no δ¹³C columns found, skipping.")
-            continue
-        records = parse_sheet(ws, col_map)
-        all_records.extend(records)
-
-    wb.close()
-
-    if not all_records:
-        print("ERROR: no records extracted. Run with --inspect to check column names.")
-        sys.exit(1)
-
-    valid, invalid = validate_records(all_records)
-    if invalid:
-        print(f"\nWARNING: {len(invalid)} records failed schema validation:")
-        for r in invalid:
-            print(f"  {r['sample_id']}: {r['validation_errors']}")
-
-    slug = doi_to_slug(DOI)
-    out_path = save_extracted(slug, all_records, meta={
-        "citation": CITATION,
-        "doi": DOI,
-        "source_file": si_path.name,
-        "valid": len(valid),
-        "invalid": len(invalid),
-    })
-    print(f"\nSaved {len(all_records)} records ({len(valid)} valid, {len(invalid)} invalid)"
-          f"\n  → {out_path}")
-
-
-# ─── CLI ──────────────────────────────────────────────────────────────────────
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--inspect", action="store_true",
-                        help="Print all sheet names and column headers, then exit")
+                        help="Print structure summary and exit")
     parser.add_argument("--si-file", type=Path, default=None,
-                        help="Path to the Hammann 2022 SI spreadsheet. "
-                             "If omitted, searched in ORA_DATA_DIR.")
-    parser.add_argument("--sheet", type=str, default=None,
-                        help="Parse only this sheet (default: all sheets)")
+                        help="Path to 41467_2022_32286_MOESM1_ESM.pdf")
     args = parser.parse_args()
 
     si_path = args.si_file
     if si_path is None:
-        si_path = find_si_file(DATA_DIR)
+        si_path = find_si_pdf(DATA_DIR)
         if si_path is None:
-            print(f"Could not find Hammann 2022 SI spreadsheet in {DATA_DIR}.\n"
-                  f"Download it from: https://doi.org/10.1038/s41467-022-32286-0\n"
-                  f"(Supplementary Data file) and place it in ORA_DATA_DIR.\n"
-                  f"Then re-run: python pipeline/01_tier_a_hammann.py --inspect")
+            print(f"Could not find Hammann SI PDF in {DATA_DIR}.")
+            print("Expected: 41467_2022_32286_MOESM1_ESM.pdf")
             sys.exit(1)
 
     if args.inspect:
         inspect(si_path)
         return
 
-    run(si_path, sheet_name=args.sheet)
+    print(f"Parsing Hammann 2022 SI: {si_path.name}")
+    records = parse(si_path)
+
+    if not records:
+        print("ERROR: no records extracted.")
+        sys.exit(1)
+
+    valid, invalid = validate_records(records)
+    if invalid:
+        print(f"\nWARNING: {len(invalid)} records failed schema validation:")
+        for r in invalid:
+            print(f"  {r.get('sample_id')}: {r.get('validation_errors')}")
+
+    slug = doi_to_slug(DOI)
+    out_path = save_extracted(slug, records, meta={
+        "citation":    CITATION,
+        "doi":         DOI,
+        "source_file": si_path.name,
+        "valid":       len(valid),
+        "invalid":     len(invalid),
+    })
+    print(f"\nSaved {len(records)} records ({len(valid)} valid, {len(invalid)} invalid)")
+    print(f"  -> {out_path}")
 
 
 if __name__ == "__main__":

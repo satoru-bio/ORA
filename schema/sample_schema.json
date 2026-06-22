@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ORA residue record",
+  "description": "One analysed sherd/vessel from a British or Irish Neolithic pottery lipid residue study.",
+  "type": "object",
+  "required": [
+    "sample_id", "source", "region", "site",
+    "ceramic_type", "period",
+    "d13C_16_0", "d13C_18_0", "delta_13C",
+    "analytical", "qa"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "sample_id": {
+      "type": "string",
+      "description": "The paper's own label for the sherd or vessel"
+    },
+    "source": {
+      "type": "object",
+      "required": ["citation", "doi", "table_or_figure", "extraction_route"],
+      "additionalProperties": false,
+      "properties": {
+        "citation":         { "type": "string" },
+        "doi":              { "type": "string" },
+        "table_or_figure":  { "type": "string" },
+        "extraction_route": {
+          "type": "string",
+          "enum": ["tierA_parse", "tierB_llm", "tierC_figure"]
+        }
+      }
+    },
+    "region": {
+      "type": "string",
+      "enum": ["Britain", "Ireland"]
+    },
+    "site":    { "type": "string" },
+    "site_lat":  { "type": ["number", "null"] },
+    "site_long": { "type": ["number", "null"] },
+    "context":   { "type": ["string", "null"] },
+    "ceramic_type": { "type": "string" },
+    "period": {
+      "type": "string",
+      "enum": [
+        "Early Neolithic",
+        "Middle Neolithic",
+        "Late Neolithic",
+        "Neolithic (unspec)"
+      ]
+    },
+    "date_range_bce": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": { "type": "integer" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        { "type": "null" }
+      ]
+    },
+    "d13C_16_0": {
+      "type": "number",
+      "description": "δ¹³C of C16:0 fatty acid (per mille, ‰)"
+    },
+    "d13C_18_0": {
+      "type": "number",
+      "description": "δ¹³C of C18:0 fatty acid (per mille, ‰)"
+    },
+    "delta_13C": {
+      "type": "number",
+      "description": "Δ¹³C = δ¹³C18:0 − δ¹³C16:0 (per mille, ‰); computed wherever not reported"
+    },
+    "d2H_16_0": {
+      "type": ["number", "null"],
+      "description": "δ²H of C16:0 if reported"
+    },
+    "author_assignment": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": [
+            "ruminant dairy",
+            "ruminant adipose",
+            "non-ruminant/porcine",
+            "aquatic",
+            "mixed",
+            "none"
+          ]
+        },
+        { "type": "null" }
+      ],
+      "description": "Authors' own commodity call, exactly as stated. Never overwritten by tool."
+    },
+    "analytical": {
+      "type": "object",
+      "required": [],
+      "additionalProperties": false,
+      "properties": {
+        "extraction_method": { "type": ["string", "null"] },
+        "derivatisation":    { "type": ["string", "null"] },
+        "instrument":        { "type": ["string", "null"] },
+        "lab":               { "type": ["string", "null"] }
+      }
+    },
+    "qa": {
+      "type": "object",
+      "required": ["value_from", "extraction_confidence"],
+      "additionalProperties": false,
+      "properties": {
+        "value_from": {
+          "type": "string",
+          "enum": ["table", "figure", "text"]
+        },
+        "extraction_confidence": {
+          "type": "string",
+          "enum": ["high", "medium", "low"]
+        },
+        "flags": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

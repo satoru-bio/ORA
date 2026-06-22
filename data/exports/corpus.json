@@ -8,7 +8,7 @@
     "cite_original_studies": "Per-record source attribution is mandatory. Cite the original study listed in each record's source.citation field alongside this dataset.",
     "description": "Harmonised, value-level dataset of compound-specific δ¹³C (C16:0 and C18:0 fatty acids) extracted from published British and Irish Neolithic pottery lipid residue studies. Δ¹³C = δ¹³C18:0 − δ¹³C16:0. Reference thresholds after Copley et al. 2003 and Evershed et al. 2008 (NW-European C3 context). This dataset is for contextualisation only — it does not classify unknown samples.",
     "aquatic_caveat": "Δ¹³C alone cannot resolve aquatic/marine fats from non-ruminant adipose — they overlap. Separating them requires biomarker evidence (isoprenoid acids, C20/C22 APAAs) not captured in this dataset.",
-    "generated": "2026-06-22T12:48:30.532629+00:00",
+    "generated": "2026-06-22T13:03:49.372198+00:00",
     "record_count": 29,
     "sources": [
       "Hammann et al. 2022"
@@ -342,7 +342,7 @@
       }
     },
     {
-      "sample_id": "LAR15-14",
+      "sample_id": "LAR15-14.1",
       "source": {
         "citation": "Hammann et al. 2022",
         "doi": "10.1038/s41467-022-32286-0",
@@ -354,7 +354,7 @@
       "site_lat": 58.183,
       "site_long": -6.333,
       "context": null,
-      "ceramic_type": ".1 Small jar Small- medium",
+      "ceramic_type": "Small jar Small- medium",
       "period": "Early Neolithic",
       "date_range_bce": [
         3640,
@@ -378,7 +378,7 @@
       }
     },
     {
-      "sample_id": "LAR15-19",
+      "sample_id": "LAR15-19.1",
       "source": {
         "citation": "Hammann et al. 2022",
         "doi": "10.1038/s41467-022-32286-0",
@@ -390,7 +390,7 @@
       "site_lat": 58.183,
       "site_long": -6.333,
       "context": null,
-      "ceramic_type": ".1 Unknown unknown",
+      "ceramic_type": "Unknown unknown",
       "period": "Early Neolithic",
       "date_range_bce": [
         3640,
@@ -594,7 +594,7 @@
       }
     },
     {
-      "sample_id": "LAR19-52 \nVisible \nResidue",
+      "sample_id": "LAR19-52 Visible Residue",
       "source": {
         "citation": "Hammann et al. 2022",
         "doi": "10.1038/s41467-022-32286-0",

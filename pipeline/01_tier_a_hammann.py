@@ -101,7 +101,7 @@ TABLE_PAGES = range(19, 25)
 # Sample ID pattern: LAD/LAR/BHO/LAN + digits + hyphen + digits + optional letter
 # Special: "LAR15-43 Visible Residue" is a separate entry — captured by (?:\s+Visible\s+Residue)?
 SAMPLE_ID_RE = re.compile(
-    r"((?:LAD|LAR|BHO|LAN)\d+-\d+[a-z]?(?:\s+Visible\s+Residue)?)"
+    r"((?:LAD|LAR|BHO|LAN)\d+-\d+[a-z0-9.]*(?:\s+Visible\s+Residue)?)"
 )
 
 # Three consecutive negative floats = d16, d18, delta (reported)
@@ -136,7 +136,7 @@ def parse(pdf_path: Path) -> list[dict]:
     skipped_parse_error = 0
 
     for i, m in enumerate(id_matches):
-        sample_id = m.group(1).strip()
+        sample_id = re.sub(r'\s+', ' ', m.group(1)).strip()
         # Text between this sample ID and the next
         chunk_start = m.end()
         chunk_end = id_matches[i + 1].start() if i + 1 < len(id_matches) else len(raw_text)

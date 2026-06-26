@@ -110,6 +110,12 @@ EXCLUDED_DOIS = {
     "10.1017/S0003598X00095703":
         "Mukherjee et al. 2007 Antiquity precursor - dropped by decision; "
         "resolves and is obtainable if ever reinstated",
+    # Stale Mukherjee 2008 DOI used in early pipeline draft; superseded above.
+    "10.1016/j.jas.2008.01.005":
+        "Old/incorrect Mukherjee 2008 DOI; superseded by 10.1016/j.jas.2008.01.010",
+    # Stale Smyth & Evershed 2016 DOI used in early pipeline draft; superseded above.
+    "10.1080/14614103.2016.1164345":
+        "Old/incorrect Smyth & Evershed 2016 DOI; superseded by 10.1179/1749631414Y.0000000045",
 }
 
 # Copley siblings in the same JAS volume are excluded by period rather than by

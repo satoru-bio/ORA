@@ -1,18 +1,25 @@
 """
 02_tier_b_extract.py — LLM-assisted extraction (Tier B) for PDF-based papers.
 
-Tier B papers in the seed corpus:
+The corpus is SIX papers (see pipeline/seed_corpus.py for canonical DOIs).
+Hammann et al. 2022 is handled by Tier A (01_tier_a_hammann.py); the five
+remaining papers are extracted here via LLM.
+
+Tier B papers (SEED_DOIS minus Tier A):
   1. Copley et al. 2003, PNAS 100:1524–29        DOI 10.1073/pnas.0335955100
-  2. Copley et al. 2005c, JAS 32:523–546          DOI 10.1016/j.jas.2004.05.003
-  3. Mukherjee et al. 2008, JAS 35:2059–73        DOI 10.1016/j.jas.2008.01.005
+  2. Copley et al. 2005 (III), JAS 32:523–546    DOI 10.1016/j.jas.2004.08.006
+  3. Mukherjee et al. 2008, JAS 35:2059–73       DOI 10.1016/j.jas.2008.01.010
   4. Cramp et al. 2014, Proc R Soc B 281:20132372 DOI 10.1098/rspb.2013.2372
-  6. Smyth & Evershed 2016, Environ Archaeol 21   DOI 10.1080/14614103.2016.1164345
+  5. Smyth & Evershed 2016, Environ Archaeol 21  DOI 10.1179/1749631414Y.0000000045
 
 Usage (extract one paper):
-    python pipeline/02_tier_b_extract.py --doi 10.1016/j.jas.2004.05.003
+    python pipeline/02_tier_b_extract.py --doi 10.1016/j.jas.2004.08.006
 
-Usage (extract all configured papers):
+Usage (extract all Tier B papers):
     python pipeline/02_tier_b_extract.py --all
+
+--all iterates SEED_DOIS (from seed_corpus.py) and skips any DOI not in the
+Tier B CORPUS dict (i.e. Hammann, which is Tier A).
 
 Costs are logged per paper. Expected total: well under $5 for the five Tier B papers.
 """
@@ -33,6 +40,7 @@ from pipeline.common import (
     DATA_DIR, compute_delta, doi_to_slug, extract_pdf_text,
     plausibility_flags, save_extracted, validate_records,
 )
+from pipeline.seed_corpus import EXCLUDED_DOIS, SEED_DOIS
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -54,15 +62,15 @@ CORPUS = {
             "The Neolithic filter is applied downstream, not here."
         ),
     },
-    "10.1016/j.jas.2004.05.003": {
-        "citation":          "Copley et al. 2005c",
+    "10.1016/j.jas.2004.08.006": {
+        "citation":          "Copley et al. 2005 (III)",
         "pdf_hint":          "S0305440304001189",
         "table_or_figure":   "Table 2",
         "region_default":    "Britain",
         "filter_neolithic":  False,
         "notes": "438 sherds, 6 sites, southern Britain Neolithic.",
     },
-    "10.1016/j.jas.2008.01.005": {
+    "10.1016/j.jas.2008.01.010": {
         "citation":          "Mukherjee et al. 2008",
         "pdf_hint":          "S0305440308000174",
         "table_or_figure":   "Table 1",
@@ -79,10 +87,10 @@ CORPUS = {
         "notes": (
             "Mixed British and Irish samples — tag region per row. "
             "Concerns fishing-to-dairying transition; aquatic samples present. "
-            "Aquatic caveat applies: Δ¹³C alone cannot resolve aquatic/marine fats."
+            "Aquatic caveat applies: delta-13C alone cannot resolve aquatic/marine fats."
         ),
     },
-    "10.1080/14614103.2016.1164345": {
+    "10.1179/1749631414Y.0000000045": {
         "citation":          "Smyth & Evershed 2016",
         "pdf_hint":          "SmythEvershed",
         "table_or_figure":   "Table 1 / Appendix",
@@ -388,12 +396,19 @@ def main():
     client = anthropic.Anthropic()
 
     if args.doi:
+        if args.doi in EXCLUDED_DOIS:
+            log.error("DOI %s is on the hard-exclude list: %s", args.doi, EXCLUDED_DOIS[args.doi])
+            sys.exit(1)
         if args.doi not in CORPUS:
             log.error("Unknown DOI: %s\nConfigured: %s", args.doi, list(CORPUS.keys()))
             sys.exit(1)
         process_paper(client, args.doi)
     elif args.all:
-        for doi in CORPUS:
+        # Iterate the authoritative SEED_DOIS list; skip any DOI handled by Tier A.
+        for doi in SEED_DOIS:
+            if doi not in CORPUS:
+                log.info("Skipping %s (not in Tier B CORPUS — handled by Tier A or deferred)", doi)
+                continue
             process_paper(client, doi)
     else:
         parser.print_help()

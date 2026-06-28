@@ -89,6 +89,17 @@ CORPUS = {
             "Concerns fishing-to-dairying transition; aquatic samples present. "
             "Aquatic caveat applies: delta-13C alone cannot resolve aquatic/marine fats."
         ),
+        # Secondary provenance pointer — NOT read for v1 values.
+        # Raw IRMS deposit confirmed to contain per-replicate C16/C18 delta-13C but
+        # in lab-tracking format (replicate pairs, formula cells, 6 region files).
+        # v1 values come from the published table above. This key is carried into
+        # the JSON intermediate meta block by process_paper() for traceability.
+        "raw_deposit": {
+            "doi":   "10.5523/bris.upjtf9os1dzr154phmgvrupib",
+            "url":   "https://data.bris.ac.uk/data/dataset/upjtf9os1dzr154phmgvrupib",
+            "title": "Marine fats in ancient pots IRMS",
+            "note":  "raw IRMS lab-tracking (replicate-level); not used for v1",
+        },
     },
     "10.1179/1749631414Y.0000000045": {
         "citation":          "Smyth & Evershed 2016",
@@ -365,7 +376,7 @@ def process_paper(client: anthropic.Anthropic, doi: str):
         for r in invalid:
             log.warning("  %s: %s", r.get("sample_id"), r.get("validation_errors"))
 
-    out_path = save_extracted(slug, records, meta={
+    meta = {
         "citation": citation,
         "doi": doi,
         "pdf_file": pdf_path.name,
@@ -374,7 +385,10 @@ def process_paper(client: anthropic.Anthropic, doi: str):
         "record_count": len(records),
         "valid": len(valid),
         "invalid": len(invalid),
-    })
+    }
+    if config.get("raw_deposit"):
+        meta["raw_deposit"] = config["raw_deposit"]
+    out_path = save_extracted(slug, records, meta=meta)
     log.info("Saved %d records → %s", len(records), out_path)
 
 

@@ -65,9 +65,21 @@ SEED_CORPUS = [
         "journal": "Proceedings of the Royal Society B",
         "locator": "281(1780):20132372",
         "access": "open (CC-BY)",
-        "data": "single-compound stable isotope data deposited at Bristol RDR "
-                "(doi:10.5523/bris.upjtf9o..., confirm full id from the paper's "
-                "data-accessibility statement); deposit-pull, not figure work",
+        "data": "v1 values from published Table 1 / ESM (Tier B). Raw IRMS deposit exists "
+                "but is NOT used for v1 — see raw_deposit below.",
+        "raw_deposit": {
+            "doi":   "10.5523/bris.upjtf9os1dzr154phmgvrupib",
+            "url":   "https://data.bris.ac.uk/data/dataset/upjtf9os1dzr154phmgvrupib",
+            "title": "Marine fats in ancient pots IRMS",
+            "note":  (
+                "Raw IRMS lab-tracking spreadsheets (replicate-level, 6 files by region: "
+                "bornish.xls, English sites.xls, Isles.xlsx, NERC marine file list_Jan2014.xlsx, "
+                "orkney.xls, Scottish Sites.xls). Isotopes sheet has C16/C18 delta-13C per "
+                "replicate injection (a/b pairs), FAME standards, and formula cells — not a clean "
+                "per-sample table. Not used for v1. Candidate source if v2 ever needs per-sample "
+                "measurement uncertainty or replicate-level data."
+            ),
+        },
     },
     {
         "doi": "10.1038/s41467-022-32286-0",

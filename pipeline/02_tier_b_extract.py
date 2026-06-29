@@ -40,19 +40,26 @@ from pipeline.common import (
     DATA_DIR, compute_delta, doi_to_slug, extract_pdf_text,
     plausibility_flags, save_extracted, validate_records,
 )
-from pipeline.seed_corpus import EXCLUDED_DOIS, SEED_DOIS
+from pipeline.seed_corpus import EXCLUDED_DOIS, SEED_CORPUS, SEED_DOIS
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
 
 # ─── Corpus configuration ─────────────────────────────────────────────────────
-# Maps DOI → (citation, pdf_filename_hint, region, filter_to_neolithic)
-# pdf_filename_hint: partial match against filenames in ORA_DATA_DIR
+# CORPUS is built at module load — never edit citation or raw_deposit here.
+#
+# Two sources:
+#   seed_corpus.SEED_CORPUS — canonical paper metadata (citation/ref, raw_deposit).
+#   _TIER_B_OPERATIONAL     — Tier-B-only extraction config (pdf_hint, table hints,
+#                             region default, notes). Edit these here.
+#
+# Assertion: every key in _TIER_B_OPERATIONAL must be in SEED_DOIS.
 
-CORPUS = {
+_SEED_BY_DOI: dict = {c["doi"]: c for c in SEED_CORPUS}
+
+_TIER_B_OPERATIONAL: dict = {
     "10.1073/pnas.0335955100": {
-        "citation":          "Copley et al. 2003",
         "pdf_hint":          "copley-et-al-2003",
         "table_or_figure":   "Table 1 / Supplementary Table",
         "region_default":    "Britain",
@@ -63,7 +70,6 @@ CORPUS = {
         ),
     },
     "10.1016/j.jas.2004.08.006": {
-        "citation":          "Copley et al. 2005 (III)",
         "pdf_hint":          "S0305440304001189",
         "table_or_figure":   "Table 2",
         "region_default":    "Britain",
@@ -71,7 +77,6 @@ CORPUS = {
         "notes": "438 sherds, 6 sites, southern Britain Neolithic.",
     },
     "10.1016/j.jas.2008.01.010": {
-        "citation":          "Mukherjee et al. 2008",
         "pdf_hint":          "S0305440308000174",
         "table_or_figure":   "Table 1",
         "region_default":    "Britain",
@@ -79,7 +84,6 @@ CORPUS = {
         "notes": "222 sherds, Grooved Ware, porcine vs ruminant focus.",
     },
     "10.1098/rspb.2013.2372": {
-        "citation":          "Cramp et al. 2014",
         "pdf_hint":          "rspb.2013.2372",
         "table_or_figure":   "Table 1 / Electronic Supplementary Material",
         "region_default":    None,   # mixed Britain + Ireland — tag per row
@@ -89,20 +93,8 @@ CORPUS = {
             "Concerns fishing-to-dairying transition; aquatic samples present. "
             "Aquatic caveat applies: delta-13C alone cannot resolve aquatic/marine fats."
         ),
-        # Secondary provenance pointer — NOT read for v1 values.
-        # Raw IRMS deposit confirmed to contain per-replicate C16/C18 delta-13C but
-        # in lab-tracking format (replicate pairs, formula cells, 6 region files).
-        # v1 values come from the published table above. This key is carried into
-        # the JSON intermediate meta block by process_paper() for traceability.
-        "raw_deposit": {
-            "doi":   "10.5523/bris.upjtf9os1dzr154phmgvrupib",
-            "url":   "https://data.bris.ac.uk/data/dataset/upjtf9os1dzr154phmgvrupib",
-            "title": "Marine fats in ancient pots IRMS",
-            "note":  "raw IRMS lab-tracking (replicate-level); not used for v1",
-        },
     },
     "10.1179/1749631414Y.0000000045": {
-        "citation":          "Smyth & Evershed 2016",
         "pdf_hint":          "SmythEvershed",
         "table_or_figure":   "Table 1 / Appendix",
         "region_default":    "Ireland",
@@ -110,6 +102,39 @@ CORPUS = {
         "notes": "~450 vessels, 15 Irish sites.",
     },
 }
+
+_missing_from_seed = set(_TIER_B_OPERATIONAL) - set(SEED_DOIS)
+assert not _missing_from_seed, (
+    f"_TIER_B_OPERATIONAL DOI(s) not in SEED_DOIS: {_missing_from_seed}"
+)
+
+
+def _build_corpus() -> dict:
+    """Merge SEED_CORPUS metadata with Tier-B operational config.
+
+    citation derives from SEED_CORPUS ref; raw_deposit (if present on the
+    seed entry) is condensed and carried through to the JSON intermediate
+    meta block. Neither field should be set directly in _TIER_B_OPERATIONAL.
+    """
+    out = {}
+    for doi, ops in _TIER_B_OPERATIONAL.items():
+        seed = _SEED_BY_DOI[doi]
+        entry: dict = {"citation": seed["ref"], **ops}
+        if seed.get("raw_deposit"):
+            rd = seed["raw_deposit"]
+            # Condense: everything before the "Candidate source" clause.
+            condensed = rd["note"].split(". Candidate")[0].rstrip(".")
+            entry["raw_deposit"] = {
+                "doi":   rd["doi"],
+                "url":   rd["url"],
+                "title": rd["title"],
+                "note":  condensed,
+            }
+        out[doi] = entry
+    return out
+
+
+CORPUS = _build_corpus()
 
 # ─── Model split ─────────────────────────────────────────────────────────────
 

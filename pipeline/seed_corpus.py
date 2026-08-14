@@ -8,21 +8,23 @@ deferred Dudd file 1-s2.0-S0305440398904344-main.pdf) cannot enter a run.
 
 DOIs verified against publisher and citation records, 2026-06-26.
 
-NB list length: the corpus is FOUR active papers. Two papers were removed:
+NB list length: the corpus is THREE active papers. Three papers were removed:
 - Copley et al. 2003 (PNAS): per-sherd values only in Figure 1 (Tier C); data
   subsumed by Copley et al. 2005 (III) which is in the active corpus.
 - Mukherjee et al. 2008 (JAS): per-sherd values only in Figures 6-9 (Tier C);
   no SI or data deposit found; unique Grooved Ware data, reinstate if digitised.
-See EXCLUDED_DOIS for full notes on both.
+- Cramp et al. 2014 (PRSB): ESM inaccessible (old RSB server gone, new domain
+  403s); Bristol raw IRMS deposit (10.5523/bris.upjtf9os1dzr154phmgvrupib)
+  exists but is 1.1 GiB replicate-level runs, not clean per-sample values.
+See EXCLUDED_DOIS for full notes on all three.
 
 Keying route: Hammann is open with deposited machine-readable isotope data
-(Tier A). The three Tier B papers are table/appendix extractions.
+(Tier A). The two Tier B papers are table/appendix extractions.
 """
 
 # Canonical DOIs - the array --all iterates. Order is fetch order.
 SEED_DOIS = [
     "10.1016/j.jas.2004.08.006",       # Copley et al. 2005 (III),  JAS 32:523-546 (Neolithic)
-    "10.1098/rspb.2013.2372",          # Cramp et al. 2014,         PRSB 281(1780):20132372
     "10.1038/s41467-022-32286-0",      # Hammann et al. 2022,       Nat Commun 13:5045
     "10.1179/1749631414Y.0000000045",  # Smyth & Evershed 2016,     Environ Archaeol 21(3):214-229
 ]
@@ -38,29 +40,6 @@ SEED_CORPUS = [
         "locator": "32:523-546",
         "access": "paywalled",
         "data": "tables/figures",
-    },
-    {
-        "doi": "10.1098/rspb.2013.2372",
-        "ref": "Cramp et al. 2014",
-        "title": "Immediate replacement of fishing with dairying by the earliest farmers of the northeast Atlantic archipelagos",
-        "journal": "Proceedings of the Royal Society B",
-        "locator": "281(1780):20132372",
-        "access": "open (CC-BY)",
-        "data": "v1 values from published Table 1 / ESM (Tier B). Raw IRMS deposit exists "
-                "but is NOT used for v1 — see raw_deposit below.",
-        "raw_deposit": {
-            "doi":   "10.5523/bris.upjtf9os1dzr154phmgvrupib",
-            "url":   "https://data.bris.ac.uk/data/dataset/upjtf9os1dzr154phmgvrupib",
-            "title": "Marine fats in ancient pots IRMS",
-            "note":  (
-                "Raw IRMS lab-tracking spreadsheets (replicate-level, 6 files by region: "
-                "bornish.xls, English sites.xls, Isles.xlsx, NERC marine file list_Jan2014.xlsx, "
-                "orkney.xls, Scottish Sites.xls). Isotopes sheet has C16/C18 delta-13C per "
-                "replicate injection (a/b pairs), FAME standards, and formula cells — not a clean "
-                "per-sample table. Not used for v1. Candidate source if v2 ever needs per-sample "
-                "measurement uncertainty or replicate-level data."
-            ),
-        },
     },
     {
         "doi": "10.1038/s41467-022-32286-0",
@@ -109,6 +88,17 @@ EXCLUDED_DOIS = {
     # Stale Smyth & Evershed 2016 DOI used in early pipeline draft; superseded above.
     "10.1080/14614103.2016.1164345":
         "Old/incorrect Smyth & Evershed 2016 DOI; superseded by 10.1179/1749631414Y.0000000045",
+    # Cramp 2014 (PRSB) - removed from active corpus 2026-08-14.
+    # ESM inaccessible: old RSB server (rspb.royalsocietypublishing.org) gone; new domain
+    # (royalsocietypublishing.org) returns 403. Bristol raw IRMS deposit exists
+    # (10.5523/bris.upjtf9os1dzr154phmgvrupib, 1.1 GiB, replicate-level runs) but is not
+    # a clean per-sample table and is not worth parsing for v1. Reinstate if ESM is
+    # recovered from authors or if Bristol deposit is parsed in a future Tier A pass.
+    "10.1098/rspb.2013.2372":
+        "Cramp et al. 2014 PRSB 281(1780):20132372 - ESM inaccessible (old RSB server "
+        "gone, new domain 403s). Bristol raw IRMS deposit "
+        "(10.5523/bris.upjtf9os1dzr154phmgvrupib) exists but is replicate-level, not "
+        "per-sample. Reinstate if ESM recovered or Bristol deposit parsed (Tier A).",
     # Mukherjee 2008 (JAS) - removed from active corpus 2026-08-14.
     # Per-sherd delta-13C values appear only in Figures 6-9 (scatter plots); no SI,
     # no data deposit found. Data is unique (222 Grooved Ware sherds, domestic vs
@@ -136,7 +126,7 @@ EXCLUDED_DOIS = {
 # Bronze Age (II) = JAS 32:505-521. Only the Neolithic (III, 523-546) is in scope.
 
 if __name__ == "__main__":
-    assert len(SEED_DOIS) == len(SEED_CORPUS) == 4
+    assert len(SEED_DOIS) == len(SEED_CORPUS) == 3
     assert {c["doi"] for c in SEED_CORPUS} == set(SEED_DOIS)
     assert not (set(SEED_DOIS) & set(EXCLUDED_DOIS)), "seed/exclude overlap"
     print(f"{len(SEED_DOIS)} seed DOIs, {len(EXCLUDED_DOIS)} excluded\n")

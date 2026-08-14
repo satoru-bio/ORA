@@ -7,13 +7,12 @@ remaining papers are extracted here via LLM.
 
 Tier B papers (SEED_DOIS minus Tier A):
   1. Copley et al. 2005 (III), JAS 32:523–546    DOI 10.1016/j.jas.2004.08.006
-  2. Cramp et al. 2014, Proc R Soc B 281:20132372 DOI 10.1098/rspb.2013.2372
-  3. Smyth & Evershed 2016, Environ Archaeol 21  DOI 10.1179/1749631414Y.0000000045
+  2. Smyth & Evershed 2016, Environ Archaeol 21  DOI 10.1179/1749631414Y.0000000045
 
-  Two papers removed from active corpus (2026-08-14) — per-sherd values only in
-  scatter-plot figures (Tier C), no SI found:
-    Copley et al. 2003 (PNAS 100:1524–29)     DOI 10.1073/pnas.0335955100
-    Mukherjee et al. 2008 (JAS 35:2059–73)    DOI 10.1016/j.jas.2008.01.010
+  Three papers removed from active corpus (2026-08-14):
+    Copley et al. 2003 (PNAS)      — Tier C (Figure 1 only); subsumed by Copley III
+    Mukherjee et al. 2008 (JAS)    — Tier C (Figs 6–9 only); no SI found
+    Cramp et al. 2014 (PRSB)       — ESM inaccessible; Bristol deposit not parsed
   See EXCLUDED_DOIS in seed_corpus.py for full notes.
 
 Usage (extract one paper):
@@ -69,17 +68,6 @@ _TIER_B_OPERATIONAL: dict = {
         "region_default":    "Britain",
         "filter_neolithic":  False,
         "notes": "438 sherds, 6 sites, southern Britain Neolithic.",
-    },
-    "10.1098/rspb.2013.2372": {
-        "pdf_hint":          "rspb.2013.2372",
-        "table_or_figure":   "Table 1 / Electronic Supplementary Material",
-        "region_default":    None,   # mixed Britain + Ireland — tag per row
-        "filter_neolithic":  False,
-        "notes": (
-            "Mixed British and Irish samples — tag region per row. "
-            "Concerns fishing-to-dairying transition; aquatic samples present. "
-            "Aquatic caveat applies: delta-13C alone cannot resolve aquatic/marine fats."
-        ),
     },
     "10.1179/1749631414Y.0000000045": {
         "pdf_hint":          "SmythEvershed",

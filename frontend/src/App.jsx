@@ -232,6 +232,23 @@ export default function App() {
             samples' isoscape.
           </p>
 
+          {/* v2 TODO: render 2D reference ellipses in scatter view instead of diagonal
+              threshold lines — the source papers classified by ellipse position in
+              δ16/δ18 space, not by the 1D Δ cutoff. High-δ16 samples can sit inside
+              the dairy Δ band while falling outside the dairy ellipse. Requires
+              digitising or computing reference population ellipses from the corpus. */}
+          <div className="sat-note boundary">
+            <Info size={13} />
+            <span>
+              <b>Band boundary caveat:</b> These bands are a 1D projection of Δ¹³C.
+              The source papers classified samples using 2D reference ellipses in
+              δ¹³C16:0 / δ¹³C18:0 space — a sample can plot within a Δ band while
+              falling outside the corresponding ellipse, especially at high δ¹³C16:0.
+              For samples near a boundary, check position in the{" "}
+              <b>scatter view</b> before drawing conclusions from the band label.
+            </span>
+          </div>
+
           {!isIllustrative && (
             <>
               <div className="sat-eyebrow mt"><Filter size={13} /> Filter corpus</div>
@@ -409,6 +426,7 @@ export default function App() {
                 {userRows.map(r => {
                   const b = BAND[bandOf(r.delta)];
                   const isNearBoundary = Math.abs(r.delta - T_NONRUM) < 1.0 || Math.abs(r.delta - T_DAIRY) < 0.5;
+                  const isNearDairy = Math.abs(r.delta - T_DAIRY) < 1.0;
                   return (
                     <tr key={r.id}>
                       <td className="mono">{r.id}</td>
@@ -422,6 +440,11 @@ export default function App() {
                         {isNearBoundary && bandOf(r.delta) === "nonrum" && (
                           <span className="aquatic-warn" title="Aquatic caveat applies — see left panel">
                             ⚠ aquatic possible
+                          </span>
+                        )}
+                        {isNearDairy && (
+                          <span className="boundary-warn" title="Near the dairy/adipose boundary — check scatter view for 2D position">
+                            check scatter view
                           </span>
                         )}
                       </td>
@@ -529,6 +552,8 @@ const css = `
 .sat-note svg{flex:none;margin-top:1px;color:${AMBER_DEEP}}
 .sat-note.aquatic{background:#fdf6e3;border:1px solid #f0d798}
 .sat-note.aquatic svg{color:#c07c00}
+.sat-note.boundary{background:#eef2f8;border:1px solid #c5d3e8}
+.sat-note.boundary svg{color:#3a6094}
 .sat-main{padding:16px 18px 4px}
 .sat-tabs{display:flex;gap:6px;margin-bottom:10px}
 .sat-tabs button{display:inline-flex;align-items:center;gap:6px;border:1px solid #d4dae2;background:#fff;color:${INK_SOFT};
@@ -553,6 +578,8 @@ const css = `
 .sat-table td{padding:6px 8px;border-bottom:1px solid #eef1f5}
 .sat-table .chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600}
 .aquatic-warn{margin-left:7px;font-size:10px;color:#8a5c00;background:#fef3cd;
+  padding:1px 6px;border-radius:999px;font-weight:600}
+.boundary-warn{margin-left:7px;font-size:10px;color:#3a5a8a;background:#dde8f5;
   padding:1px 6px;border-radius:999px;font-weight:600}
 .sat-disclaim{font-size:10.5px;color:#7c8696;line-height:1.55;margin:8px 2px 12px}
 .sat-tip{background:${INK};color:#fff;border-radius:8px;padding:8px 10px;font-size:11.5px;box-shadow:0 6px 18px rgba(0,0,0,.2);max-width:220px}

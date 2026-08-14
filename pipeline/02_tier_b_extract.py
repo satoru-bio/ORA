@@ -6,11 +6,14 @@ Hammann et al. 2022 is handled by Tier A (01_tier_a_hammann.py); the five
 remaining papers are extracted here via LLM.
 
 Tier B papers (SEED_DOIS minus Tier A):
-  1. Copley et al. 2003, PNAS 100:1524–29        DOI 10.1073/pnas.0335955100
-  2. Copley et al. 2005 (III), JAS 32:523–546    DOI 10.1016/j.jas.2004.08.006
-  3. Mukherjee et al. 2008, JAS 35:2059–73       DOI 10.1016/j.jas.2008.01.010
-  4. Cramp et al. 2014, Proc R Soc B 281:20132372 DOI 10.1098/rspb.2013.2372
-  5. Smyth & Evershed 2016, Environ Archaeol 21  DOI 10.1179/1749631414Y.0000000045
+  1. Copley et al. 2005 (III), JAS 32:523–546    DOI 10.1016/j.jas.2004.08.006
+  2. Mukherjee et al. 2008, JAS 35:2059–73       DOI 10.1016/j.jas.2008.01.010
+  3. Cramp et al. 2014, Proc R Soc B 281:20132372 DOI 10.1098/rspb.2013.2372
+  4. Smyth & Evershed 2016, Environ Archaeol 21  DOI 10.1179/1749631414Y.0000000045
+
+  Copley et al. 2003 (PNAS 100:1524–29) was removed from the active corpus
+  (2026-08-14): per-sherd values are only in Figure 1 (Tier C). See
+  EXCLUDED_DOIS in seed_corpus.py for the full exclusion note.
 
 Usage (extract one paper):
     python pipeline/02_tier_b_extract.py --doi 10.1016/j.jas.2004.08.006
@@ -59,16 +62,6 @@ log = logging.getLogger(__name__)
 _SEED_BY_DOI: dict = {c["doi"]: c for c in SEED_CORPUS}
 
 _TIER_B_OPERATIONAL: dict = {
-    "10.1073/pnas.0335955100": {
-        "pdf_hint":          "copley-et-al-2003",
-        "table_or_figure":   "Table 1 / Supplementary Table",
-        "region_default":    "Britain",
-        "filter_neolithic":  True,   # multi-period paper; tag and retain all
-        "notes": (
-            "Multi-period paper — extract all rows and tag period. "
-            "The Neolithic filter is applied downstream, not here."
-        ),
-    },
     "10.1016/j.jas.2004.08.006": {
         "pdf_hint":          "S0305440304001189",
         "table_or_figure":   "Table 2",
@@ -193,8 +186,12 @@ Critical rules:
 5. If a value is illegible or absent, omit that row.
 6. Tag period per row. If the paper has a consistent period for all sherds, apply it to every row.
 7. Tag region per row: Britain (England, Scotland, Wales) or Ireland.
+8. Output format: return COMPACT JSON — no pretty-printing, no extra whitespace between elements.
+   One record per line is ideal. This is critical to stay within the output token budget.
+   If the text you are given is only a portion of the full PDF, extract only complete rows
+   visible in this portion; do not invent or infer missing rows.
 
-Return a JSON array (may be empty if no eligible rows found).
+Return a compact JSON array (may be empty if no eligible rows found).
 """
 
 EXTRACT_USER_TEMPLATE = """\
@@ -243,6 +240,54 @@ def triage(client: anthropic.Anthropic, pdf_text: str) -> dict:
                 "figures_with_d13C": [], "notes": f"triage parse error: {raw}"}, tokens
 
 
+def _extract_single_chunk(
+    client: anthropic.Anthropic,
+    pdf_chunk: str,
+    doi: str,
+    config: dict,
+    target_tables: list[str],
+) -> tuple[list[dict] | None, int, str]:
+    """Call Sonnet on one chunk of PDF text.
+
+    Returns (records_or_None, tokens_used, stop_reason).
+    records_or_None is None on JSON parse failure; caller should treat as empty.
+    stop_reason is 'end_turn' on clean finish, 'max_tokens' if truncated.
+    """
+    user_msg = EXTRACT_USER_TEMPLATE.format(
+        citation=config["citation"],
+        doi=doi,
+        notes=config.get("notes", ""),
+        target_tables=", ".join(target_tables) or config["table_or_figure"],
+        pdf_text=pdf_chunk,
+    )
+    msg = client.messages.create(
+        model=MODEL_EXTRACT,
+        max_tokens=16384,
+        system=EXTRACT_SYSTEM,
+        messages=[{"role": "user", "content": user_msg}],
+    )
+    raw = msg.content[0].text.strip()
+    tokens = msg.usage.input_tokens + msg.usage.output_tokens
+    stop_reason = msg.stop_reason
+    raw = re.sub(r"```json\s*|\s*```", "", raw).strip()
+    try:
+        records = json.loads(raw)
+        if not isinstance(records, list):
+            records = [records]
+        return records, tokens, stop_reason
+    except json.JSONDecodeError as e:
+        # If raw doesn't look like JSON the model returned prose ("no data in this chunk")
+        # rather than a malformed array — log at WARNING, not ERROR.
+        is_prose = raw and not raw.lstrip().startswith(("[", "{"))
+        if is_prose:
+            log.warning("Chunk returned prose instead of JSON (no table rows in this portion): %s...",
+                        raw[:120])
+        else:
+            log.error("JSON parse error on Sonnet output (stop=%s): %s\nRaw (first 400): %s",
+                      stop_reason, e, raw[:400])
+        return None, tokens, stop_reason
+
+
 def extract_records(
     client: anthropic.Anthropic,
     pdf_text: str,
@@ -250,31 +295,66 @@ def extract_records(
     config: dict,
     target_tables: list[str],
 ) -> tuple[list[dict], int]:
-    """Stage 2 (Sonnet): extract all δ¹³C rows from the identified tables."""
-    user_msg = EXTRACT_USER_TEMPLATE.format(
-        citation=config["citation"],
-        doi=doi,
-        notes=config.get("notes", ""),
-        target_tables=", ".join(target_tables) or config["table_or_figure"],
-        pdf_text=pdf_text[:120_000],
-    )
-    msg = client.messages.create(
-        model=MODEL_EXTRACT,
-        max_tokens=8192,
-        system=EXTRACT_SYSTEM,
-        messages=[{"role": "user", "content": user_msg}],
-    )
-    raw = msg.content[0].text.strip()
-    tokens = msg.usage.input_tokens + msg.usage.output_tokens
-    raw = re.sub(r"```json\s*|\s*```", "", raw).strip()
-    try:
-        records = json.loads(raw)
-        if not isinstance(records, list):
-            records = [records]
-        return records, tokens
-    except json.JSONDecodeError as e:
-        log.error("JSON parse error on Sonnet output: %s\nRaw: %s", e, raw[:500])
-        return [], tokens
+    """Stage 2 (Sonnet): extract all δ¹³C rows from the identified tables.
+
+    For PDFs ≤ CHUNK_THRESHOLD chars, uses a single API call.
+    For larger PDFs, splits into overlapping chunks and merges results by sample_id.
+    Chunking keeps each call's output well under the 16384 max_tokens limit.
+    """
+    CHUNK_THRESHOLD = 30_000  # chars; single-pass below this, chunked above
+    CHUNK_SIZE      = 15_000  # chars per chunk
+    CHUNK_OVERLAP   =    500  # trailing chars repeated in next chunk (avoids split rows)
+    MAX_TEXT        = 120_000 # hard cap on total PDF chars consumed
+
+    text = pdf_text[:MAX_TEXT]
+
+    if len(text) <= CHUNK_THRESHOLD:
+        records, tokens, stop_reason = _extract_single_chunk(
+            client, text, doi, config, target_tables,
+        )
+        if stop_reason == "max_tokens":
+            log.warning("Short-PDF extraction truncated (stop=max_tokens); some records may be missing.")
+        return (records or []), tokens
+
+    # ── Chunked path for long PDFs ───────────────────────────────────────────
+    chunks: list[str] = []
+    start = 0
+    while start < len(text):
+        end = min(start + CHUNK_SIZE, len(text))
+        chunks.append(text[start:end])
+        next_start = start + CHUNK_SIZE - CHUNK_OVERLAP
+        if next_start <= start:
+            break
+        start = next_start
+
+    log.info("Long PDF (%d chars) -> chunked extraction: %d chunks of ~%d chars",
+             len(text), len(chunks), CHUNK_SIZE)
+
+    all_records: list[dict] = []
+    total_tokens = 0
+    seen_ids: set[str] = set()
+
+    for i, chunk in enumerate(chunks):
+        log.info("  Chunk %d/%d (%d chars)...", i + 1, len(chunks), len(chunk))
+        recs, tok, stop_reason = _extract_single_chunk(
+            client, chunk, doi, config, target_tables,
+        )
+        total_tokens += tok
+        if stop_reason == "max_tokens":
+            log.warning("  Chunk %d/%d still truncated — consider reducing CHUNK_SIZE.",
+                        i + 1, len(chunks))
+        new_count = 0
+        for r in (recs or []):
+            sid = r.get("sample_id", "")
+            if sid and sid not in seen_ids:
+                seen_ids.add(sid)
+                all_records.append(r)
+                new_count += 1
+        log.info("  -> %d new records (total so far: %d)", new_count, len(all_records))
+
+    log.info("Chunked extraction complete: %d unique records from %d chunks",
+             len(all_records), len(chunks))
+    return all_records, total_tokens
 
 
 def normalise_extracted(records: list[dict], doi: str, config: dict) -> list[dict]:

@@ -8,19 +8,19 @@ deferred Dudd file 1-s2.0-S0305440398904344-main.pdf) cannot enter a run.
 
 DOIs verified against publisher and citation records, 2026-06-26.
 
-NB list length: the corpus is SIX papers. A prior pipeline note referenced a
-five-DOI list. Confirm whether Copley 2003 (PNAS, open) was being ingested by
-a separate path before relying on --all across all six. If not, this is the
-full set and the five-DOI note is stale.
+NB list length: the corpus is FIVE active papers. Copley et al. 2003 (PNAS)
+was removed from the active set (2026-08-14): its per-sherd delta-13C values
+appear only in Figure 1 (Tier C, scatter plot only — no SI or data deposit).
+The same Bristol research group's formal Neolithic per-sherd dataset is in
+Copley et al. 2005 (III), JAS 32:523-546, which IS in this corpus and covers
+the same programme. See EXCLUDED_DOIS for the full exclusion note.
 
-Keying route splits on access: Cramp and Hammann are open with deposited
-machine-readable isotope data (deposit-pull). The three paywalled papers are
-the table/figure digitisation jobs.
+Keying route splits on access: Hammann is open with deposited machine-readable
+isotope data (Tier A). The four Tier B papers are table/appendix extractions.
 """
 
 # Canonical DOIs - the array --all iterates. Order is fetch order.
 SEED_DOIS = [
-    "10.1073/pnas.0335955100",         # Copley et al. 2003,        PNAS 100:1524-1529
     "10.1016/j.jas.2004.08.006",       # Copley et al. 2005 (III),  JAS 32:523-546 (Neolithic)
     "10.1016/j.jas.2008.01.010",       # Mukherjee et al. 2008,     JAS 35:2059-2073
     "10.1098/rspb.2013.2372",          # Cramp et al. 2014,         PRSB 281(1780):20132372
@@ -31,15 +31,6 @@ SEED_DOIS = [
 # Full provenance, for per-record attribution and for sanity-checking the fetch
 # resolved to the intended paper (guards against silently keying a trap twin).
 SEED_CORPUS = [
-    {
-        "doi": "10.1073/pnas.0335955100",
-        "ref": "Copley et al. 2003",
-        "title": "Direct chemical evidence for widespread dairying in prehistoric Britain",
-        "journal": "PNAS",
-        "locator": "100:1524-1529",
-        "access": "open",
-        "data": "in-text tables/figures",
-    },
     {
         "doi": "10.1016/j.jas.2004.08.006",
         "ref": "Copley et al. 2005 (III)",
@@ -128,6 +119,16 @@ EXCLUDED_DOIS = {
     # Stale Smyth & Evershed 2016 DOI used in early pipeline draft; superseded above.
     "10.1080/14614103.2016.1164345":
         "Old/incorrect Smyth & Evershed 2016 DOI; superseded by 10.1179/1749631414Y.0000000045",
+    # Copley 2003 (PNAS) - removed from active corpus 2026-08-14.
+    # Per-sherd delta-13C values appear only in Figure 1 (scatter plot); no SI, no data deposit.
+    # The same Bristol research group published their formal Neolithic per-sherd dataset in
+    # Copley et al. 2005 (III), JAS 32:523-546 (10.1016/j.jas.2004.08.006), which IS in the
+    # active corpus (191 records). Including the 2003 PNAS figure values would risk duplicate
+    # sample_ids and adds no data not already captured in the 2005 JAS series.
+    "10.1073/pnas.0335955100":
+        "Copley et al. 2003 PNAS 100:1524-1529 - per-sherd values only in Figure 1 (Tier C, "
+        "scatter plot, no SI). Formal dataset published as Copley et al. 2005 (III), JAS "
+        "32:523-546, which is in the active corpus. Excluded to avoid duplicate sample_ids.",
 }
 
 # Copley siblings in the same JAS volume are excluded by period rather than by
@@ -136,7 +137,7 @@ EXCLUDED_DOIS = {
 # Bronze Age (II) = JAS 32:505-521. Only the Neolithic (III, 523-546) is in scope.
 
 if __name__ == "__main__":
-    assert len(SEED_DOIS) == len(SEED_CORPUS) == 6
+    assert len(SEED_DOIS) == len(SEED_CORPUS) == 5
     assert {c["doi"] for c in SEED_CORPUS} == set(SEED_DOIS)
     assert not (set(SEED_DOIS) & set(EXCLUDED_DOIS)), "seed/exclude overlap"
     print(f"{len(SEED_DOIS)} seed DOIs, {len(EXCLUDED_DOIS)} excluded\n")

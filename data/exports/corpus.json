@@ -8,7 +8,7 @@
     "cite_original_studies": "Per-record source attribution is mandatory. Cite the original study listed in each record's source.citation field alongside this dataset.",
     "description": "Harmonised, value-level dataset of compound-specific δ¹³C (C16:0 and C18:0 fatty acids) extracted from published British and Irish Neolithic pottery lipid residue studies. Δ¹³C = δ¹³C18:0 − δ¹³C16:0. Reference thresholds after Copley et al. 2003 and Evershed et al. 2008 (NW-European C3 context). This dataset is for contextualisation only — it does not classify unknown samples.",
     "aquatic_caveat": "Δ¹³C alone cannot resolve aquatic/marine fats from non-ruminant adipose — they overlap. Separating them requires biomarker evidence (isoprenoid acids, C20/C22 APAAs) not captured in this dataset.",
-    "generated": "2026-08-14T15:13:53.387493+00:00",
+    "generated": "2026-08-14T15:34:31.639473+00:00",
     "record_count": 327,
     "sources": [
       "Copley et al. 2005 (III)",
@@ -3827,9 +3827,9 @@
           "d18_out_of_C3_range",
           "delta_out_of_range",
           "low_confidence_extraction",
-          "suspected_typo_in_source_paper"
+          "confirmed_typo_in_source_paper"
         ],
-        "qa_notes": "d13C_18_0=−20.7 is a typographical error in the published Copley III table (Appendix 1). PDF text confirms correct column order (C16/C18); swapping gives Δ=−7.8 which is equally implausible. Most likely −30.7 (giving Δ=−2.2, consistent with author_assignment='mixed'). Cannot correct published values; kept as-is for citation integrity."
+        "qa_notes": "d13C_18_0=−20.7 confirmed from PDF text (pypdf: '/C25520.7'). Table prints −20.7 in the C18:0 column — this is a typographical error in the published Copley III Appendix 1, not an extraction error. Correct column order verified: C16:0=−28.5 appears first, C18:0=−20.7 second. A column swap would give Δ=−7.8 (equally implausible). Most likely −30.7 (giving Δ=−2.2, consistent with author_assignment='mixed'). Cannot correct published values; kept as-is for citation integrity."
       }
     },
     {

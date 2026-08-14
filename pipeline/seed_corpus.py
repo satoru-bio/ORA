@@ -8,21 +8,20 @@ deferred Dudd file 1-s2.0-S0305440398904344-main.pdf) cannot enter a run.
 
 DOIs verified against publisher and citation records, 2026-06-26.
 
-NB list length: the corpus is FIVE active papers. Copley et al. 2003 (PNAS)
-was removed from the active set (2026-08-14): its per-sherd delta-13C values
-appear only in Figure 1 (Tier C, scatter plot only — no SI or data deposit).
-The same Bristol research group's formal Neolithic per-sherd dataset is in
-Copley et al. 2005 (III), JAS 32:523-546, which IS in this corpus and covers
-the same programme. See EXCLUDED_DOIS for the full exclusion note.
+NB list length: the corpus is FOUR active papers. Two papers were removed:
+- Copley et al. 2003 (PNAS): per-sherd values only in Figure 1 (Tier C); data
+  subsumed by Copley et al. 2005 (III) which is in the active corpus.
+- Mukherjee et al. 2008 (JAS): per-sherd values only in Figures 6-9 (Tier C);
+  no SI or data deposit found; unique Grooved Ware data, reinstate if digitised.
+See EXCLUDED_DOIS for full notes on both.
 
-Keying route splits on access: Hammann is open with deposited machine-readable
-isotope data (Tier A). The four Tier B papers are table/appendix extractions.
+Keying route: Hammann is open with deposited machine-readable isotope data
+(Tier A). The three Tier B papers are table/appendix extractions.
 """
 
 # Canonical DOIs - the array --all iterates. Order is fetch order.
 SEED_DOIS = [
     "10.1016/j.jas.2004.08.006",       # Copley et al. 2005 (III),  JAS 32:523-546 (Neolithic)
-    "10.1016/j.jas.2008.01.010",       # Mukherjee et al. 2008,     JAS 35:2059-2073
     "10.1098/rspb.2013.2372",          # Cramp et al. 2014,         PRSB 281(1780):20132372
     "10.1038/s41467-022-32286-0",      # Hammann et al. 2022,       Nat Commun 13:5045
     "10.1179/1749631414Y.0000000045",  # Smyth & Evershed 2016,     Environ Archaeol 21(3):214-229
@@ -37,15 +36,6 @@ SEED_CORPUS = [
         "title": "Dairying in antiquity. III. Evidence from absorbed lipid residues dating to the British Neolithic",
         "journal": "Journal of Archaeological Science",
         "locator": "32:523-546",
-        "access": "paywalled",
-        "data": "tables/figures",
-    },
-    {
-        "doi": "10.1016/j.jas.2008.01.010",
-        "ref": "Mukherjee et al. 2008",
-        "title": "Trends in pig product processing at British Neolithic Grooved Ware sites traced through organic residues in potsherds",
-        "journal": "Journal of Archaeological Science",
-        "locator": "35:2059-2073",
         "access": "paywalled",
         "data": "tables/figures",
     },
@@ -119,6 +109,15 @@ EXCLUDED_DOIS = {
     # Stale Smyth & Evershed 2016 DOI used in early pipeline draft; superseded above.
     "10.1080/14614103.2016.1164345":
         "Old/incorrect Smyth & Evershed 2016 DOI; superseded by 10.1179/1749631414Y.0000000045",
+    # Mukherjee 2008 (JAS) - removed from active corpus 2026-08-14.
+    # Per-sherd delta-13C values appear only in Figures 6-9 (scatter plots); no SI,
+    # no data deposit found. Data is unique (222 Grooved Ware sherds, domestic vs
+    # ceremonial sites) and not covered by any other paper in the corpus. Reinstate
+    # if per-sherd values are recovered via Tier C digitisation (WebPlotDigitizer).
+    "10.1016/j.jas.2008.01.010":
+        "Mukherjee et al. 2008 JAS 35:2059-2073 - per-sherd values only in Figures "
+        "6-9 (Tier C, scatter plots, no SI). Unique Grooved Ware data; reinstate with "
+        "extraction_route=tierC_figure if digitised.",
     # Copley 2003 (PNAS) - removed from active corpus 2026-08-14.
     # Per-sherd delta-13C values appear only in Figure 1 (scatter plot); no SI, no data deposit.
     # The same Bristol research group published their formal Neolithic per-sherd dataset in
@@ -137,7 +136,7 @@ EXCLUDED_DOIS = {
 # Bronze Age (II) = JAS 32:505-521. Only the Neolithic (III, 523-546) is in scope.
 
 if __name__ == "__main__":
-    assert len(SEED_DOIS) == len(SEED_CORPUS) == 5
+    assert len(SEED_DOIS) == len(SEED_CORPUS) == 4
     assert {c["doi"] for c in SEED_CORPUS} == set(SEED_DOIS)
     assert not (set(SEED_DOIS) & set(EXCLUDED_DOIS)), "seed/exclude overlap"
     print(f"{len(SEED_DOIS)} seed DOIs, {len(EXCLUDED_DOIS)} excluded\n")

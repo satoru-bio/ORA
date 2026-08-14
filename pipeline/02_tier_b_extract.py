@@ -7,13 +7,14 @@ remaining papers are extracted here via LLM.
 
 Tier B papers (SEED_DOIS minus Tier A):
   1. Copley et al. 2005 (III), JAS 32:523–546    DOI 10.1016/j.jas.2004.08.006
-  2. Mukherjee et al. 2008, JAS 35:2059–73       DOI 10.1016/j.jas.2008.01.010
-  3. Cramp et al. 2014, Proc R Soc B 281:20132372 DOI 10.1098/rspb.2013.2372
-  4. Smyth & Evershed 2016, Environ Archaeol 21  DOI 10.1179/1749631414Y.0000000045
+  2. Cramp et al. 2014, Proc R Soc B 281:20132372 DOI 10.1098/rspb.2013.2372
+  3. Smyth & Evershed 2016, Environ Archaeol 21  DOI 10.1179/1749631414Y.0000000045
 
-  Copley et al. 2003 (PNAS 100:1524–29) was removed from the active corpus
-  (2026-08-14): per-sherd values are only in Figure 1 (Tier C). See
-  EXCLUDED_DOIS in seed_corpus.py for the full exclusion note.
+  Two papers removed from active corpus (2026-08-14) — per-sherd values only in
+  scatter-plot figures (Tier C), no SI found:
+    Copley et al. 2003 (PNAS 100:1524–29)     DOI 10.1073/pnas.0335955100
+    Mukherjee et al. 2008 (JAS 35:2059–73)    DOI 10.1016/j.jas.2008.01.010
+  See EXCLUDED_DOIS in seed_corpus.py for full notes.
 
 Usage (extract one paper):
     python pipeline/02_tier_b_extract.py --doi 10.1016/j.jas.2004.08.006
@@ -68,13 +69,6 @@ _TIER_B_OPERATIONAL: dict = {
         "region_default":    "Britain",
         "filter_neolithic":  False,
         "notes": "438 sherds, 6 sites, southern Britain Neolithic.",
-    },
-    "10.1016/j.jas.2008.01.010": {
-        "pdf_hint":          "S0305440308000174",
-        "table_or_figure":   "Table 1",
-        "region_default":    "Britain",
-        "filter_neolithic":  False,
-        "notes": "222 sherds, Grooved Ware, porcine vs ruminant focus.",
     },
     "10.1098/rspb.2013.2372": {
         "pdf_hint":          "rspb.2013.2372",

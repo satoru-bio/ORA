@@ -137,7 +137,7 @@ Cite the original study for each record you use, as well as this repository. The
 
 Suggested repository citation:
 
-> Satoru / DigiShield Labs. *ORA: Organic Residue Archive — harmonised compound-specific δ¹³C dataset from British and Irish Neolithic pottery*. https://github.com/satoru-bio/ORA. Data CC-BY-4.0.
+> Satoru / DigiShield Labs (2026). *ORA: Organic Residue Archive — harmonised compound-specific δ¹³C dataset from British and Irish Neolithic pottery*. https://github.com/satoru-bio/ORA. Data CC-BY-4.0.
 
 ---
 

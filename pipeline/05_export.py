@@ -34,7 +34,7 @@ EXPORT_META = {
     "license": "CC-BY 4.0",
     "license_url": "https://creativecommons.org/licenses/by/4.0/",
     "cite_as": (
-        "Satoru / DigiShield Labs (2025). ORA: Organic Residue Archive — "
+        "Satoru / DigiShield Labs (2026). ORA: Organic Residue Archive — "
         "compound-specific δ¹³C from British and Irish Neolithic pottery lipid residue studies. "
         "CC-BY 4.0. github.com/satoru-bio/ORA"
     ),
@@ -281,6 +281,7 @@ def main():
             "record_count": len(frontend_records),
             "sources": sources,
             "license": "CC-BY 4.0 — cite Satoru/DigiShield Labs + original studies",
+            "license_file": "LICENSE-DATA",
             "aquatic_caveat": EXPORT_META["aquatic_caveat"],
         },
         "records": frontend_records,

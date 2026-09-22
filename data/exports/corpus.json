@@ -4,11 +4,11 @@
     "version": "1.0",
     "license": "CC-BY 4.0",
     "license_url": "https://creativecommons.org/licenses/by/4.0/",
-    "cite_as": "Satoru / DigiShield Labs (2025). ORA: Organic Residue Archive — compound-specific δ¹³C from British and Irish Neolithic pottery lipid residue studies. CC-BY 4.0. github.com/satoru-bio/ORA",
+    "cite_as": "Satoru / DigiShield Labs (2026). ORA: Organic Residue Archive — compound-specific δ¹³C from British and Irish Neolithic pottery lipid residue studies. CC-BY 4.0. github.com/satoru-bio/ORA",
     "cite_original_studies": "Per-record source attribution is mandatory. Cite the original study listed in each record's source.citation field alongside this dataset.",
     "description": "Harmonised, value-level dataset of compound-specific δ¹³C (C16:0 and C18:0 fatty acids) extracted from published British and Irish Neolithic pottery lipid residue studies. Δ¹³C = δ¹³C18:0 − δ¹³C16:0. Reference thresholds after Copley et al. 2003 and Evershed et al. 2008 (NW-European C3 context). This dataset is for contextualisation only — it does not classify unknown samples.",
     "aquatic_caveat": "Δ¹³C alone cannot resolve aquatic/marine fats from non-ruminant adipose — they overlap. Separating them requires biomarker evidence (isoprenoid acids, C20/C22 APAAs) not captured in this dataset.",
-    "generated": "2026-08-14T15:48:03.088720+00:00",
+    "generated": "2026-09-22T12:54:22.907784+00:00",
     "record_count": 327,
     "sources": [
       "Copley et al. 2005 (III)",

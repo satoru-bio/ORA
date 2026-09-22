@@ -1,0 +1,44 @@
+ORA — Organic Residue Archive: dataset licence
+
+Copyright (c) 2025 DigiShield Labs / Satoru
+
+The ORA dataset is licensed under the Creative Commons Attribution 4.0
+International Licence (CC-BY-4.0).
+
+  Summary:    https://creativecommons.org/licenses/by/4.0/
+  Legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+
+SCOPE
+
+This licence covers the dataset files:
+
+  data/exports/corpus.json       canonical dataset (full schema)
+  data/exports/corpus.csv        tabular rendering of the same records
+  frontend/public/corpus.json    reshaped copy of the same records, generated
+                                 by pipeline/05_export.py for the web tool
+
+It does not cover the source code (pipeline/, frontend/src/, db/, schema/ and
+configuration files). The code is licensed separately under the MIT licence;
+see LICENSE.
+
+WHAT THIS LICENCE COVERS AND DOES NOT COVER
+
+The licence applies to ORA's compilation, harmonisation and structuring of
+published values. It grants no rights in the original publications, which
+remain under their publishers' terms. Each record identifies its source
+publication in the source.citation and source.doi fields (in corpus.csv,
+the citation and doi columns).
+
+ATTRIBUTION
+
+When you reuse or redistribute the dataset, or any subset of it, cite both:
+
+  1. This dataset:
+     Satoru / DigiShield Labs. ORA: Organic Residue Archive.
+     https://github.com/satoru-bio/ORA
+
+  2. The original study for every record you use, as given in that record's
+     source.citation and source.doi fields.
+
+Per-record attribution is part of how the dataset is meant to be used. A
+subset drawn from a single study still requires a citation of that study.

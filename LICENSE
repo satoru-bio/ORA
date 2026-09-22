@@ -19,14 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-DATASET LICENCE
-
-The ORA corpus (corpus.json, corpus.csv) is published under CC-BY 4.0.
-https://creativecommons.org/licenses/by/4.0/
-
-Per-record citation of the original study is required. Cite both:
-  1. Satoru / DigiShield Labs — this dataset (github.com/satoru-bio/ORA)
-  2. The original study listed in each record's source.citation field

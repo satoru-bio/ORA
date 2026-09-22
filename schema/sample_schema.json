@@ -159,6 +159,10 @@
         "flags": {
           "type": "array",
           "items": { "type": "string" }
+        },
+        "qa_notes": {
+          "type": "string",
+          "description": "Optional free-text QA note explaining a flag or verification outcome"
         }
       }
     }

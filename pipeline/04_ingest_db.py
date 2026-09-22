@@ -18,7 +18,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from pipeline.common import (
-    EXTRACTED_DIR, all_extracted_slugs, doi_to_slug, get_db_conn, load_extracted,
+    DEFAULT_REFERENCE_CONTEXT, EXTRACTED_DIR, all_extracted_slugs, doi_to_slug,
+    get_db_conn, load_extracted,
 )
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -39,6 +40,8 @@ def ingest_record(cur, r: dict) -> bool:
     cur.execute("""
         INSERT INTO residue_records (
             sample_id, citation, doi, table_or_figure, extraction_route,
+            provenance_of_value, original_doi, original_record_id,
+            prior_graphical_report, provenance_note, reference_context,
             region, site, site_location, context,
             ceramic_type, period, date_range_from, date_range_to,
             d13C_16_0, d13C_18_0, d2H_16_0,
@@ -47,6 +50,8 @@ def ingest_record(cur, r: dict) -> bool:
             value_from, extraction_confidence, flags
         ) VALUES (
             %s, %s, %s, %s, %s,
+            %s, %s, %s,
+            %s, %s, %s,
             %s, %s, ST_GeomFromEWKT(%s), %s,
             %s, %s, %s, %s,
             %s, %s, %s,
@@ -62,6 +67,13 @@ def ingest_record(cur, r: dict) -> bool:
         src.get("doi"),
         src.get("table_or_figure"),
         src.get("extraction_route"),
+
+        r.get("provenance_of_value", "original"),
+        r.get("original_doi"),
+        r.get("original_record_id"),
+        r.get("prior_graphical_report"),
+        r.get("provenance_note"),
+        r.get("reference_context", DEFAULT_REFERENCE_CONTEXT),
 
         r["region"],
         r["site"],

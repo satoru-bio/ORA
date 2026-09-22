@@ -23,7 +23,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from pipeline.common import EXTRACTED_DIR, ROOT, all_extracted_slugs, get_db_conn, load_extracted
+from pipeline.common import (
+    EXTRACTED_DIR, ROOT, all_extracted_slugs, get_db_conn, is_independent, load_extracted,
+)
 
 EXPORT_DIR = ROOT / "data" / "exports"
 FRONTEND_PUBLIC = ROOT / "frontend" / "public"
@@ -60,6 +62,8 @@ EXPORT_META = {
 # Columns written to CSV (flat subset of the full schema)
 CSV_COLUMNS = [
     "sample_id", "citation", "doi", "table_or_figure", "extraction_route",
+    "provenance_of_value", "original_doi", "original_record_id",
+    "prior_graphical_report", "provenance_note", "reference_context",
     "region", "site", "site_lat", "site_long",
     "ceramic_type", "period", "date_range_from", "date_range_to",
     "d13C_16_0", "d13C_18_0", "delta_13C", "d2H_16_0",
@@ -78,6 +82,12 @@ SELECT
     r.doi,
     r.table_or_figure,
     r.extraction_route,
+    r.provenance_of_value,
+    r.original_doi,
+    r.original_record_id,
+    r.prior_graphical_report,
+    r.provenance_note,
+    r.reference_context,
     r.region,
     r.site,
     ST_Y(r.site_location) AS site_lat,
@@ -133,6 +143,12 @@ def _flatten_to_full(r: dict) -> dict:
             "table_or_figure": r["table_or_figure"],
             "extraction_route": r["extraction_route"],
         },
+        "provenance_of_value":    r["provenance_of_value"],
+        "original_doi":           r.get("original_doi"),
+        "original_record_id":     r.get("original_record_id"),
+        "prior_graphical_report": r.get("prior_graphical_report"),
+        "provenance_note":        r.get("provenance_note"),
+        "reference_context": r["reference_context"],
         "region":       r["region"],
         "site":         r["site"],
         "site_lat":     float(r["site_lat"]) if r.get("site_lat") is not None else None,
@@ -183,6 +199,12 @@ def to_csv_row(r: dict) -> dict:
         "doi":               src.get("doi"),
         "table_or_figure":   src.get("table_or_figure"),
         "extraction_route":  src.get("extraction_route"),
+        "provenance_of_value":    r.get("provenance_of_value"),
+        "original_doi":           r.get("original_doi"),
+        "original_record_id":     r.get("original_record_id"),
+        "prior_graphical_report": r.get("prior_graphical_report"),
+        "provenance_note":        r.get("provenance_note"),
+        "reference_context":      r.get("reference_context"),
         "region":            r["region"],
         "site":              r["site"],
         "site_lat":          r.get("site_lat"),
@@ -252,11 +274,15 @@ def main():
         sys.exit(1)
 
     sources = sorted(set((r.get("source") or {}).get("citation", "") for r in records))
+    # record_count counts rows; independent_record_count leaves out values whose
+    # original record is itself in the corpus (original_record_id populated).
+    independent_count = sum(1 for r in records if is_independent(r))
     now = datetime.now(timezone.utc).isoformat()
 
     # ── Full JSON (archival) ──────────────────────────────────────────────────
     full_json = {
-        "meta": {**EXPORT_META, "generated": now, "record_count": len(records), "sources": sources},
+        "meta": {**EXPORT_META, "generated": now, "record_count": len(records),
+                 "independent_record_count": independent_count, "sources": sources},
         "records": records,
     }
     full_path = EXPORT_DIR / "corpus.json"
@@ -279,6 +305,7 @@ def main():
         "meta": {
             "generated": now,
             "record_count": len(frontend_records),
+            "independent_record_count": independent_count,
             "sources": sources,
             "license": "CC-BY 4.0 — cite Satoru/DigiShield Labs + original studies",
             "license_file": "LICENSE-DATA",
@@ -291,7 +318,7 @@ def main():
         json.dump(frontend_json, f, ensure_ascii=False)  # compact for browser
     print(f"  Wrote {frontend_path} (frontend corpus)")
 
-    print(f"\nDone. {len(records)} records, {len(sources)} sources.")
+    print(f"\nDone. {len(records)} records ({independent_count} independent), {len(sources)} sources.")
     print("Next: cd frontend && npm install && npm run dev")
 
 

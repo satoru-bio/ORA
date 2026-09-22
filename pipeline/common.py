@@ -100,6 +100,66 @@ def author_agrees(author_assignment: str | None, delta: float) -> bool | None:
     return band_of(delta) == expected_band
 
 
+# ─── Value provenance and reference context (D-008) ──────────────────────────
+
+DEFAULT_REFERENCE_CONTEXT = "british_irish"
+
+PROVENANCE_FIELDS = (
+    "provenance_of_value", "original_doi", "original_record_id",
+    "prior_graphical_report", "provenance_note",
+)
+
+
+def apply_provenance(record: dict) -> dict:
+    """
+    Return the record with the D-008 fields filled in.
+
+    Defaults: provenance_of_value="original", reference_context="british_irish",
+    all other provenance fields null. Matching PROVENANCE_ANNOTATIONS entries then
+    fill fields that are still null. Values already on the record are never
+    overwritten. The provenance block is placed after "source" and
+    reference_context before "region".
+    """
+    from pipeline.seed_corpus import PROVENANCE_ANNOTATIONS
+
+    prov = {k: record.get(k) for k in PROVENANCE_FIELDS}
+    if prov["provenance_of_value"] is None:
+        prov["provenance_of_value"] = "original"
+    doi = (record.get("source") or {}).get("doi")
+    for ann in PROVENANCE_ANNOTATIONS:
+        if ann["doi"] != doi:
+            continue
+        if ann.get("sites") is not None and record.get("site") not in ann["sites"]:
+            continue
+        for k in ("prior_graphical_report", "provenance_note"):
+            if prov[k] is None and ann.get(k) is not None:
+                prov[k] = ann[k]
+    ref_ctx = record.get("reference_context") or DEFAULT_REFERENCE_CONTEXT
+
+    out = {}
+    for k, v in record.items():
+        if k in PROVENANCE_FIELDS or k == "reference_context":
+            continue
+        if k == "region":
+            out["reference_context"] = ref_ctx
+        out[k] = v
+        if k == "source":
+            out.update(prov)
+    out.setdefault("reference_context", ref_ctx)
+    for k, v in prov.items():
+        out.setdefault(k, v)
+    return out
+
+
+def is_independent(record: dict) -> bool:
+    """
+    False only when the record re-reports a value whose original record is itself
+    in the corpus (original_record_id populated). Such records are left out of
+    counts and summary statistics that imply independence.
+    """
+    return record.get("original_record_id") is None
+
+
 # ─── JSON I/O ─────────────────────────────────────────────────────────────────
 
 def save_extracted(doi_slug: str, records: list[dict], meta: dict | None = None) -> Path:

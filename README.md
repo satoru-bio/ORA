@@ -39,7 +39,27 @@ In the data files, Copley 2005c is cited as `Copley et al. 2005 (III)`. That lab
 | **B** | LLM-assisted extraction from a PDF table or appendix, then human review against the source | `tierB_llm` | Copley 2005c, Smyth & Evershed 2016 |
 | **C** | Digitising values from published figures | `tierC_figure` | Not implemented in v1 |
 
-Tier A records inherit the accuracy of the deposit itself. All records passed a QA sweep (`pipeline/03_validate.py`) covering provenance, schema, physical plausibility, recomputation of Δ¹³C, and agreement between each author's assignment and the computed band. Each record's `qa.extraction_confidence` and `qa.flags` fields carry that record's outcome.
+Tier A records inherit the accuracy of the deposit itself. All records went through a QA sweep (`pipeline/03_validate.py`) covering provenance, schema, value provenance, physical plausibility, recomputation of Δ¹³C, and agreement between each author's assignment and the computed band. Each record's `qa.extraction_confidence` and `qa.flags` fields carry that record's outcome.
+
+### Value provenance and reference context
+
+Each record carries six fields, added in schema change D-008 (see [`CHANGELOG.md`](CHANGELOG.md)):
+
+| Field | Values | Meaning |
+|---|---|---|
+| `provenance_of_value` | `original` \| `reused` | Based on the **first numeric report** of the value. `original`: this record's paper is the first to report the value numerically, whether in a table or in the text. `reused`: an earlier publication already reported the value numerically. A value that was only plotted in a figure has not been numerically reported. |
+| `original_doi` | DOI or null | For `reused` values, the publication that first reported the value numerically. Always null for `original` values. |
+| `original_record_id` | `sample_id` or null | For `reused` values whose original record is itself in the corpus: that record's `sample_id`. Together with `original_doi`, it identifies the original record. |
+| `prior_graphical_report` | DOI or null | An earlier publication that plotted the value without tabulating it. |
+| `provenance_note` | text or null | Free-text note on the value's provenance. |
+| `reference_context` | `british_irish` | The interpretive context the record belongs to. Every current record is `british_irish`. The field exists so that other contexts can be added later without a schema migration. No per-context reference logic exists yet. |
+
+**Independence rule.** A record is left out of counts and summary statistics that imply independence only when `original_record_id` is populated, i.e. when the original record is itself in the corpus. `meta.record_count` in the exports counts every row. `meta.independent_record_count` counts only independent records.
+
+**Current state.** All 327 records are `original`. Two sets carry provenance annotations:
+
+- **Copley 2005c. Windmill Hill (36 records), Hambledon Hill (26) and part of Eton Rowing Lake were plotted in Copley et al. 2003 (PNAS, [10.1073/pnas.0335955100](https://doi.org/10.1073/pnas.0335955100)), Fig. 3, before Copley 2005c tabulated them.** These records have `prior_graphical_report` set to that DOI. At Eton Rowing Lake, about 23 of the 37 values were plotted, but which ones cannot be determined, so all 37 records carry the DOI plus an explanatory `provenance_note`. **If you combine ORA with values digitised from Copley 2003 Fig. 3, do not count these sherds twice.** They are the same measurements.
+- **Smyth & Evershed 2016 (all 107 records).** The `provenance_note` says the values have not been checked against two sibling publications from the same project: a 2014 book chapter and the 2015 PRIA paper.
 
 ### Known data issue: AB30
 
@@ -119,6 +139,7 @@ frontend/
 docker-compose.yml       PostgreSQL 16 + PostGIS for local pipeline runs
 LICENSE                  MIT (code)
 LICENSE-DATA             CC-BY-4.0 (data)
+CHANGELOG.md             schema and dataset changes
 ```
 
 `data/raw/` (source PDFs) and `data/processed/` (intermediate extractions) are git-ignored. Paywalled source PDFs are not redistributed.

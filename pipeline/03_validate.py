@@ -8,6 +8,8 @@ Checks (in order):
   4. Held-out ground truth — see --held-out flag
   5. Negative probe — aquatic/marine records must not silently land in dairy or non-ruminant
      (reports position, does not suppress)
+  6. Value provenance — reused values carry original_doi; original_record_id, when set,
+     must point at a record in the corpus. Summary statistics count independent records only.
 
 Exits non-zero on any ERROR-level finding.
 
@@ -24,7 +26,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from pipeline.common import (
     EXTRACTED_DIR, all_extracted_slugs, author_agrees, band_of,
-    D13C_MAX, D13C_MIN, DELTA_MAX, DELTA_MIN, load_extracted, validate_records,
+    D13C_MAX, D13C_MIN, DELTA_MAX, DELTA_MIN, is_independent, load_extracted,
+    validate_records,
 )
 
 
@@ -114,6 +117,33 @@ def check_author_agreement(records: list[dict]) -> tuple[dict[str, dict], list[s
         s["pct_agreement"] = round(100 * s["agrees"] / t, 1) if t else 0
 
     return dict(stats), disagreements
+
+
+# ─── Check 6: Value provenance ───────────────────────────────────────────────
+
+def check_value_provenance(records: list[dict]) -> list[str]:
+    """
+    Reused values must name the original publication; original_record_id, when set,
+    must resolve to (sample_id, doi) = (original_record_id, original_doi) in the corpus.
+    """
+    errors = []
+    keys = {(r.get("sample_id"), (r.get("source") or {}).get("doi")) for r in records}
+    for r in records:
+        sid = r.get("sample_id")
+        own_doi = (r.get("source") or {}).get("doi")
+        pov = r.get("provenance_of_value")
+        odoi = r.get("original_doi")
+        orid = r.get("original_record_id")
+        if pov == "reused":
+            if not odoi:
+                errors.append(f"  REUSED without original_doi: {sid} ({own_doi})")
+            elif odoi == own_doi:
+                errors.append(f"  REUSED original_doi equals own doi: {sid} ({own_doi})")
+            if orid is not None and (orid, odoi) not in keys:
+                errors.append(f"  original_record_id not in corpus: {sid} -> {orid} ({odoi})")
+        elif odoi is not None or orid is not None:
+            errors.append(f"  ORIGINAL value carries original_doi/original_record_id: {sid} ({own_doi})")
+    return errors
 
 
 # ─── Check 5: Negative probe (aquatic) ───────────────────────────────────────
@@ -219,6 +249,20 @@ def main():
     else:
         print("  OK")
 
+    # ── 2b. Value provenance ──────────────────────────────────────────────────
+    print("\n─── 2b. Value provenance ─────────────────────────────────────────")
+    vp_errors = check_value_provenance(records)
+    independent = [r for r in records if is_independent(r)]
+    n_reused = sum(1 for r in records if r.get("provenance_of_value") == "reused")
+    if vp_errors:
+        print(f"  {len(vp_errors)} provenance errors:")
+        for e in vp_errors:
+            print(e)
+        errors.extend(vp_errors)
+    else:
+        print(f"  OK — {len(records) - n_reused} original, {n_reused} reused; "
+              f"{len(independent)} independent")
+
     # ── 3. Plausibility ───────────────────────────────────────────────────────
     print("\n─── 3. Plausibility (NW-Euro C3 envelope) ────────────────────────")
     plaus_warns = check_plausibility(records)
@@ -233,7 +277,7 @@ def main():
 
     # ── 4. Author-agreement ───────────────────────────────────────────────────
     print("\n─── 4. Author-agreement (Δ¹³C band vs author_assignment) ─────────")
-    ag_stats, disagreements = check_author_agreement(records)
+    ag_stats, disagreements = check_author_agreement(independent)
     overall_total = sum(s["total"] for s in ag_stats.values())
     overall_agrees = sum(s["agrees"] for s in ag_stats.values())
     overall_pct = 100 * overall_agrees / overall_total if overall_total else 0
@@ -271,7 +315,7 @@ def main():
 
     # ── Summary ───────────────────────────────────────────────────────────────
     print(f"\n─── Summary ─────────────────────────────────────────────────────")
-    print(f"  Total records: {len(records)}")
+    print(f"  Total records: {len(records)} ({len(independent)} independent)")
     print(f"  ERRORs:  {len(errors)}")
     print(f"  WARNINGs: {len(warnings)}")
 

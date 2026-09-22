@@ -26,7 +26,7 @@ import pypdf
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from pipeline.common import (
-    DATA_DIR, compute_delta, doi_to_slug, plausibility_flags,
+    DATA_DIR, apply_provenance, compute_delta, doi_to_slug, plausibility_flags,
     save_extracted, validate_records,
 )
 
@@ -292,6 +292,7 @@ def main():
         print("ERROR: no records extracted.")
         sys.exit(1)
 
+    records = [apply_provenance(r) for r in records]
     valid, invalid = validate_records(records)
     if invalid:
         print(f"\nWARNING: {len(invalid)} records failed schema validation:")

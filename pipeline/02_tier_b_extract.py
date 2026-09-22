@@ -40,7 +40,7 @@ from dotenv import load_dotenv
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from pipeline.common import (
-    DATA_DIR, compute_delta, doi_to_slug, extract_pdf_text,
+    DATA_DIR, apply_provenance, compute_delta, doi_to_slug, extract_pdf_text,
     plausibility_flags, save_extracted, validate_records,
 )
 from pipeline.seed_corpus import EXCLUDED_DOIS, SEED_CORPUS, SEED_DOIS
@@ -453,7 +453,7 @@ def process_paper(client: anthropic.Anthropic, doi: str):
     log.info("Paper total tokens: %d", total_tokens)
 
     # Normalise
-    records = normalise_extracted(raw_records, doi, config)
+    records = [apply_provenance(r) for r in normalise_extracted(raw_records, doi, config)]
     log.info("Normalised: %d records (dropped %d malformed)",
              len(records), len(raw_records) - len(records))
 

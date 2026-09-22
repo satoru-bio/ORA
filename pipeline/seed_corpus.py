@@ -125,6 +125,39 @@ EXCLUDED_DOIS = {
 # maintainer tempted to add them): Iron Age (I) = JAS 32:485-503;
 # Bronze Age (II) = JAS 32:505-521. Only the Neolithic (III, 523-546) is in scope.
 
+# Value-provenance annotations (D-008 schema change). Applied to records by
+# common.apply_provenance(); a value already on a record always wins.
+# "sites": None means every record from that DOI.
+#
+# provenance_of_value is defined by first NUMERIC report (tabulated or stated in
+# text). A figure-only plot is not a numeric report, so all current records are
+# "original"; earlier plots are recorded in prior_graphical_report instead.
+COPLEY_2003_PNAS = "10.1073/pnas.0335955100"
+PROVENANCE_ANNOTATIONS = [
+    {
+        "doi": "10.1016/j.jas.2004.08.006",
+        "sites": ["Windmill Hill", "Hambledon Hill"],
+        "prior_graphical_report": COPLEY_2003_PNAS,
+    },
+    {
+        "doi": "10.1016/j.jas.2004.08.006",
+        "sites": ["Eton Rowing Lake"],
+        "prior_graphical_report": COPLEY_2003_PNAS,
+        "provenance_note": (
+            "Approximately 23 of the 37 Eton Rowing Lake values were plotted in "
+            "Copley et al. 2003 (PNAS) Fig. 3; which ones cannot be determined."
+        ),
+    },
+    {
+        "doi": "10.1179/1749631414Y.0000000045",
+        "sites": None,
+        "provenance_note": (
+            "Not verified against sibling publications (2014 book chapter; "
+            "2015 PRIA paper)."
+        ),
+    },
+]
+
 if __name__ == "__main__":
     assert len(SEED_DOIS) == len(SEED_CORPUS) == 3
     assert {c["doi"] for c in SEED_CORPUS} == set(SEED_DOIS)

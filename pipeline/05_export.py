@@ -18,6 +18,7 @@ Usage:
 import argparse
 import csv
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -97,10 +98,10 @@ SELECT
     r.period,
     r.date_range_from,
     r.date_range_to,
-    r.d13C_16_0,
-    r.d13C_18_0,
-    r.delta_13C,
-    r.d2H_16_0,
+    r.d13C_16_0 AS "d13C_16_0",   -- quoted aliases: Postgres folds unquoted names to lower case
+    r.d13C_18_0 AS "d13C_18_0",
+    r.delta_13C AS "delta_13C",
+    r.d2H_16_0  AS "d2H_16_0",
     r.author_assignment,
     r.extraction_method,
     r.derivatisation,
@@ -108,7 +109,8 @@ SELECT
     r.lab,
     r.value_from,
     r.extraction_confidence,
-    r.flags
+    r.flags,
+    r.qa_notes
 FROM residue_records r
 ORDER BY r.citation, r.site, r.sample_id
 """
@@ -172,8 +174,27 @@ def _flatten_to_full(r: dict) -> dict:
             "value_from":           r.get("value_from", "table"),
             "extraction_confidence": r.get("extraction_confidence", "high"),
             "flags":               r.get("flags", []),
+            # qa_notes is optional in the schema: only emit it when present, as the
+            # extracted JSON does
+            **({"qa_notes": r["qa_notes"]} if r.get("qa_notes") is not None else {}),
         },
     }
+
+
+def _natural_key(s: str) -> tuple:
+    """Numeric-aware key: AB1 < AB2 < AB10 < AB14, and '7833/5199' sorts sanely."""
+    return tuple((int(part), "") if part.isdigit() else (-1, part.lower())
+                 for part in re.split(r"(\d+)", s) if part != "")
+
+
+def canonical_sort_key(r: dict) -> tuple:
+    """
+    (citation, site, sample_id) with numeric-aware sample_id ordering. Applied on
+    both export routes so that they produce identical output.
+    """
+    return ((r.get("source") or {}).get("citation") or "",
+            r.get("site") or "",
+            _natural_key(r.get("sample_id") or ""))
 
 
 # ─── Extracted-JSON export (no DB) ────────────────────────────────────────────
@@ -268,6 +289,7 @@ def main():
     else:
         records = records_from_db()
         print(f"  {len(records)} records from DB")
+    records.sort(key=canonical_sort_key)
 
     if not records:
         print("ERROR: no records to export.")

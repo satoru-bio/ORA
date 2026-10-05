@@ -17,6 +17,11 @@ Added before any expansion paper is ingested, following the decision to build OR
 - **Audit of the existing 327 records:** all are `original`. Copley 2005c's Windmill Hill, Hambledon Hill and Eton Rowing Lake records have `prior_graphical_report` set to Copley et al. 2003 (PNAS, 10.1073/pnas.0335955100). The Eton Rowing Lake records carry a note that only about 23 of the 37 were plotted. All Smyth & Evershed 2016 records carry a note that they have not been verified against the project's 2014 and 2015 sibling publications. Record counts and values are unchanged.
 - **Database:** migration `db/migrations/003_value_provenance_reference_context.sql` adds the columns, a consistency constraint, the `residue_records_independent` view and the rebuilt validation views.
 
+### Database export route
+
+- `05_export.py` exports from the database again. Postgres had been returning the δ¹³C columns in lower case, which broke the DB route; the query now aliases them. Migration `004_qa_notes.sql` adds a `qa_notes` column, loaded by `04_ingest_db.py`, so AB30's QA note survives the DB route.
+- Both export routes now sort records by citation, site and sample ID, with numeric-aware sample ID ordering (AB1, AB2, AB10, not AB1, AB10, AB2), and produce identical output. This reordered the committed exports once. **The reorder is cosmetic: every record's content is unchanged, so the large diff between this release and the previous one is not a data change.**
+
 ## 1.0 — 2026-08
 
 - First release: 327 records from Copley et al. 2005c, Hammann et al. 2022 and Smyth & Evershed 2016. Code under MIT, data under CC-BY-4.0.

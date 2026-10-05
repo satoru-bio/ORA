@@ -47,7 +47,7 @@ def ingest_record(cur, r: dict) -> bool:
             d13C_16_0, d13C_18_0, d2H_16_0,
             author_assignment,
             extraction_method, derivatisation, instrument, lab,
-            value_from, extraction_confidence, flags
+            value_from, extraction_confidence, flags, qa_notes
         ) VALUES (
             %s, %s, %s, %s, %s,
             %s, %s, %s,
@@ -57,7 +57,7 @@ def ingest_record(cur, r: dict) -> bool:
             %s, %s, %s,
             %s,
             %s, %s, %s, %s,
-            %s, %s, %s
+            %s, %s, %s, %s
         )
         ON CONFLICT (sample_id, doi) DO NOTHING
         RETURNING id
@@ -99,6 +99,7 @@ def ingest_record(cur, r: dict) -> bool:
         qa.get("value_from", "table"),
         qa.get("extraction_confidence", "high"),
         qa.get("flags") or [],
+        qa.get("qa_notes"),
     ))
     return cur.fetchone() is not None
 

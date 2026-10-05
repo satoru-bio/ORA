@@ -22,6 +22,10 @@ Added before any expansion paper is ingested, following the decision to build OR
 - `05_export.py` exports from the database again. Postgres had been returning the δ¹³C columns in lower case, which broke the DB route; the query now aliases them. Migration `004_qa_notes.sql` adds a `qa_notes` column, loaded by `04_ingest_db.py`, so AB30's QA note survives the DB route.
 - Both export routes now sort records by citation, site and sample ID, with numeric-aware sample ID ordering (AB1, AB2, AB10, not AB1, AB10, AB2), and produce identical output. This reordered the committed exports once. **The reorder is cosmetic: every record's content is unchanged, so the large diff between this release and the previous one is not a data change.**
 
+### Author-agreement statistics
+
+- `author_agreement_summary` (migration `005_agreement_excludes_unmappable.sql`) now leaves out mixed, none and aquatic author assignments, as `03_validate.py` already did, rather than counting them as disagreements. ORA's 1D Δ¹³C bands cannot produce these assignments. The view reports the exclusions per paper. Per-paper figures now match the validator: overall 98.0% (250/255), with 72 records excluded (66 mixed, 6 with no author assignment).
+
 ## 1.0 — 2026-08
 
 - First release: 327 records from Copley et al. 2005c, Hammann et al. 2022 and Smyth & Evershed 2016. Code under MIT, data under CC-BY-4.0.

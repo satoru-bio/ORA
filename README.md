@@ -41,7 +41,7 @@ In the data files, Copley 2005c is cited as `Copley et al. 2005 (III)`. That lab
 
 Tier A records inherit the accuracy of the deposit itself. All records went through a QA sweep (`pipeline/03_validate.py`) covering provenance, schema, value provenance, physical plausibility, recomputation of Δ¹³C, and agreement between each author's assignment and the computed band. Each record's `qa.extraction_confidence` and `qa.flags` fields carry that record's outcome.
 
-**Author agreement** (`03_validate.py`; DB view `author_agreement_summary`): **98.0% (250/255) of records whose author assignment maps onto ORA's categories.** The remaining 72 records are excluded. 66 carry mixed, none or aquatic assignments, which ORA's 1D δ¹³C bands cannot produce; in the current corpus all 66 are mixed, meaning the original authors assigned that sherd to more than one commodity class, which a single 1D Δ¹³C band cannot represent by construction. The other 6 have no author assignment at all.
+**Author agreement** (`03_validate.py`; DB view `author_agreement_summary`): **98.0% (250/255) of records whose author assignment maps onto ORA's categories.** The remaining 72 records are excluded. 66 carry mixed, none or aquatic assignments, which ORA's 1D Δ¹³C bands cannot produce; in the current corpus all 66 are mixed, meaning the original authors assigned that sherd to more than one commodity class, which a single 1D Δ¹³C band cannot represent by construction. The other 6 have no author assignment at all.
 
 | Paper | Agreement (mappable records) | Excluded |
 |---|---|---|

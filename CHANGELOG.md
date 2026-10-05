@@ -19,7 +19,7 @@ Added before any expansion paper is ingested, following the decision to build OR
 
 ### Database export route
 
-- `05_export.py` exports from the database again. Postgres had been returning the δ¹³C columns in lower case, which broke the DB route; the query now aliases them. Migration `004_qa_notes.sql` adds a `qa_notes` column, loaded by `04_ingest_db.py`, so AB30's QA note survives the DB route.
+- `05_export.py` exports from the database again. Postgres had been returning the δ¹³C, Δ¹³C and δ²H columns in lower case, which broke the DB route; the query now aliases them. Migration `004_qa_notes.sql` adds a `qa_notes` column, loaded by `04_ingest_db.py`, so AB30's QA note survives the DB route.
 - Both export routes now sort records by citation, site and sample ID, with numeric-aware sample ID ordering (AB1, AB2, AB10, not AB1, AB10, AB2), and produce identical output. This reordered the committed exports once. **The reorder is cosmetic: every record's content is unchanged, so the large diff between this release and the previous one is not a data change.**
 
 ### Author-agreement statistics
